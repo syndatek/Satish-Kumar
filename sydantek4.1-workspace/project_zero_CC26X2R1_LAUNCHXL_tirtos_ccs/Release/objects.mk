@@ -1,0 +1,8 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+USER_OBJS :=
+
+LIBS := -l"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/examples/rtos/CC26X2R1_LAUNCHXL/ble5stack/project_zero/tirtos/ccs/cc13x2_cc26x2_app.cmd" -l"C:/tibackup/sydantek4.1-workspace/project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs/Release/syscfg/ti_utils_build_linker.cmd.genlibs" -l"ti/devices/cc13x2_cc26x2/driverlib/bin/ccs/driverlib.lib" -llibc.a
+

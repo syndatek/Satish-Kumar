@@ -1,0 +1,218 @@
+
+**** Build of configuration Debug for project freertos_builds_cc13x2_cc26x2_release_ccs ****
+
+"C:\\ti\\ccs1011\\ccs\\utils\\bin\\gmake" -k -j 4 all -O 
+ 
+Building file: "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/AppHooks_freertos.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/sydantek4.1-workspace/freertos_builds_cc13x2_cc26x2_release_ccs" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/include" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/CCS/ARM_CM4F" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=ccs --define=DeviceFamily_CC13X2_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="dpl/AppHooks_freertos.d_raw" --obj_directory="dpl"  "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/AppHooks_freertos.c"
+ 
+>> Compilation failure
+dpl/subdir_rules.mk:9: recipe for target 'dpl/AppHooks_freertos.obj' failed
+"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/AppHooks_freertos.c", line 35: fatal error #1965: cannot open source file "FreeRTOS.h"
+1 catastrophic error detected in the compilation of "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/AppHooks_freertos.c".
+Compilation terminated.
+gmake: *** [dpl/AppHooks_freertos.obj] Error 1
+Building file: "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/HwiPCC26X2_freertos.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/sydantek4.1-workspace/freertos_builds_cc13x2_cc26x2_release_ccs" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/include" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/CCS/ARM_CM4F" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=ccs --define=DeviceFamily_CC13X2_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="dpl/HwiPCC26X2_freertos.d_raw" --obj_directory="dpl"  "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/HwiPCC26X2_freertos.c"
+ 
+>> Compilation failure
+dpl/subdir_rules.mk:30: recipe for target 'dpl/HwiPCC26X2_freertos.obj' failed
+"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/HwiPCC26X2_freertos.c", line 40: fatal error #1965: cannot open source file "FreeRTOS.h"
+1 catastrophic error detected in the compilation of "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/HwiPCC26X2_freertos.c".
+Compilation terminated.
+gmake: *** [dpl/HwiPCC26X2_freertos.obj] Error 1
+Building file: "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/MutexP_freertos.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/sydantek4.1-workspace/freertos_builds_cc13x2_cc26x2_release_ccs" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/include" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/CCS/ARM_CM4F" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=ccs --define=DeviceFamily_CC13X2_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="dpl/MutexP_freertos.d_raw" --obj_directory="dpl"  "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/MutexP_freertos.c"
+ 
+>> Compilation failure
+dpl/subdir_rules.mk:37: recipe for target 'dpl/MutexP_freertos.obj' failed
+gmake: *** No rule to make target 'C:/FreeRTOSv202104.00/FreeRTOS/Source/croutine.c', needed by 'freertos/croutine.obj'.
+gmake: *** No rule to make target 'C:/FreeRTOSv202104.00/FreeRTOS/Source/event_groups.c', needed by 'freertos/event_groups.obj'.
+gmake: *** No rule to make target 'C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/MemMang/heap_4.c', needed by 'freertos/heap_4.obj'.
+gmake: *** No rule to make target 'C:/FreeRTOSv202104.00/FreeRTOS/Source/list.c', needed by 'freertos/list.obj'.
+gmake: *** No rule to make target 'C:/FreeRTOSv202104.00/FreeRTOS/Source/queue.c', needed by 'freertos/queue.obj'.
+gmake: *** No rule to make target 'C:/FreeRTOSv202104.00/FreeRTOS/Source/stream_buffer.c', needed by 'freertos/stream_buffer.obj'.
+gmake: *** No rule to make target 'C:/FreeRTOSv202104.00/FreeRTOS/Source/tasks.c', needed by 'freertos/tasks.obj'.
+gmake: *** No rule to make target 'C:/FreeRTOSv202104.00/FreeRTOS/Source/timers.c', needed by 'freertos/timers.obj'.
+gmake: *** No rule to make target 'C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/CCS/ARM_CM4F/port.c', needed by 'freertos/portable/CCS/ARM_CM4F/port.obj'.
+gmake: *** No rule to make target 'C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/CCS/ARM_CM4F/portasm.asm', needed by 'freertos/portable/CCS/ARM_CM4F/portasm.obj'.
+"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/MutexP_freertos.c", line 38: fatal error #1965: cannot open source file "FreeRTOS.h"
+1 catastrophic error detected in the compilation of "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/MutexP_freertos.c".
+Compilation terminated.
+gmake: *** [dpl/MutexP_freertos.obj] Error 1
+Building file: "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/PowerCC26X2_freertos.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/sydantek4.1-workspace/freertos_builds_cc13x2_cc26x2_release_ccs" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/include" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/CCS/ARM_CM4F" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=ccs --define=DeviceFamily_CC13X2_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="dpl/PowerCC26X2_freertos.d_raw" --obj_directory="dpl"  "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/PowerCC26X2_freertos.c"
+ 
+>> Compilation failure
+dpl/subdir_rules.mk:44: recipe for target 'dpl/PowerCC26X2_freertos.obj' failed
+"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/PowerCC26X2_freertos.c", line 42: fatal error #1965: cannot open source file "FreeRTOS.h"
+1 catastrophic error detected in the compilation of "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/PowerCC26X2_freertos.c".
+Compilation terminated.
+gmake: *** [dpl/PowerCC26X2_freertos.obj] Error 1
+Building file: "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/SemaphoreP_freertos.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/sydantek4.1-workspace/freertos_builds_cc13x2_cc26x2_release_ccs" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/include" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/CCS/ARM_CM4F" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=ccs --define=DeviceFamily_CC13X2_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="dpl/SemaphoreP_freertos.d_raw" --obj_directory="dpl"  "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/SemaphoreP_freertos.c"
+ 
+>> Compilation failure
+dpl/subdir_rules.mk:58: recipe for target 'dpl/SemaphoreP_freertos.obj' failed
+"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/SemaphoreP_freertos.c", line 39: fatal error #1965: cannot open source file "FreeRTOS.h"
+1 catastrophic error detected in the compilation of "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/SemaphoreP_freertos.c".
+Compilation terminated.
+gmake: *** [dpl/SemaphoreP_freertos.obj] Error 1
+Building file: "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/StaticAllocs_freertos.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/sydantek4.1-workspace/freertos_builds_cc13x2_cc26x2_release_ccs" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/include" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/CCS/ARM_CM4F" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=ccs --define=DeviceFamily_CC13X2_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="dpl/StaticAllocs_freertos.d_raw" --obj_directory="dpl"  "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/StaticAllocs_freertos.c"
+ 
+>> Compilation failure
+dpl/subdir_rules.mk:65: recipe for target 'dpl/StaticAllocs_freertos.obj' failed
+"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/StaticAllocs_freertos.c", line 35: fatal error #1965: cannot open source file "FreeRTOS.h"
+1 catastrophic error detected in the compilation of "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/freertos/dpl/StaticAllocs_freertos.c".
+Compilation terminated.
+gmake: *** [dpl/StaticAllocs_freertos.obj] Error 1
+Building file: "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/PTLS.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/sydantek4.1-workspace/freertos_builds_cc13x2_cc26x2_release_ccs" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/include" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/CCS/ARM_CM4F" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=ccs --define=DeviceFamily_CC13X2_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="posix/PTLS.d_raw" --obj_directory="posix"  "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/PTLS.c"
+ 
+>> Compilation failure
+posix/subdir_rules.mk:9: recipe for target 'posix/PTLS.obj' failed
+"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/PTLS.c", line 38: fatal error #1965: cannot open source file "FreeRTOS.h"
+1 catastrophic error detected in the compilation of "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/PTLS.c".
+Compilation terminated.
+gmake: *** [posix/PTLS.obj] Error 1
+Building file: "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/aeabi_portable.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/sydantek4.1-workspace/freertos_builds_cc13x2_cc26x2_release_ccs" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/include" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/CCS/ARM_CM4F" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=ccs --define=DeviceFamily_CC13X2_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="posix/aeabi_portable.d_raw" --obj_directory="posix"  "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/aeabi_portable.c"
+ 
+>> Compilation failure
+posix/subdir_rules.mk:16: recipe for target 'posix/aeabi_portable.obj' failed
+"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/aeabi_portable.c", line 37: fatal error #1965: cannot open source file "FreeRTOS.h"
+1 catastrophic error detected in the compilation of "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/aeabi_portable.c".
+Compilation terminated.
+gmake: *** [posix/aeabi_portable.obj] Error 1
+Building file: "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/memory.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/sydantek4.1-workspace/freertos_builds_cc13x2_cc26x2_release_ccs" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/include" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/CCS/ARM_CM4F" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=ccs --define=DeviceFamily_CC13X2_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="posix/memory.d_raw" --obj_directory="posix"  "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/memory.c"
+ 
+>> Compilation failure
+posix/subdir_rules.mk:30: recipe for target 'posix/memory.obj' failed
+"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/memory.c", line 64: fatal error #1965: cannot open source file "FreeRTOS.h"
+1 catastrophic error detected in the compilation of "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/memory.c".
+Compilation terminated.
+gmake: *** [posix/memory.obj] Error 1
+Building file: "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/clock.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/sydantek4.1-workspace/freertos_builds_cc13x2_cc26x2_release_ccs" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/include" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/CCS/ARM_CM4F" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=ccs --define=DeviceFamily_CC13X2_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="posix/clock.d_raw" --obj_directory="posix"  "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/clock.c"
+ 
+>> Compilation failure
+posix/subdir_rules.mk:23: recipe for target 'posix/clock.obj' failed
+"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/clock.c", line 42: fatal error #1965: cannot open source file "FreeRTOS.h"
+1 catastrophic error detected in the compilation of "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/clock.c".
+Compilation terminated.
+gmake: *** [posix/clock.obj] Error 1
+Building file: "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/mqueue.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/sydantek4.1-workspace/freertos_builds_cc13x2_cc26x2_release_ccs" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/include" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/CCS/ARM_CM4F" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=ccs --define=DeviceFamily_CC13X2_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="posix/mqueue.d_raw" --obj_directory="posix"  "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/mqueue.c"
+ 
+>> Compilation failure
+posix/subdir_rules.mk:37: recipe for target 'posix/mqueue.obj' failed
+"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/mqueue.c", line 44: fatal error #1965: cannot open source file "FreeRTOS.h"
+1 catastrophic error detected in the compilation of "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/mqueue.c".
+Compilation terminated.
+gmake: *** [posix/mqueue.obj] Error 1
+Building file: "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/pthread.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/sydantek4.1-workspace/freertos_builds_cc13x2_cc26x2_release_ccs" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/include" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/CCS/ARM_CM4F" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=ccs --define=DeviceFamily_CC13X2_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="posix/pthread.d_raw" --obj_directory="posix"  "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/pthread.c"
+ 
+>> Compilation failure
+posix/subdir_rules.mk:44: recipe for target 'posix/pthread.obj' failed
+"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/pthread.c", line 41: fatal error #1965: cannot open source file "FreeRTOS.h"
+1 catastrophic error detected in the compilation of "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/pthread.c".
+Compilation terminated.
+gmake: *** [posix/pthread.obj] Error 1
+Building file: "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/pthread_barrier.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/sydantek4.1-workspace/freertos_builds_cc13x2_cc26x2_release_ccs" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/include" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/CCS/ARM_CM4F" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=ccs --define=DeviceFamily_CC13X2_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="posix/pthread_barrier.d_raw" --obj_directory="posix"  "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/pthread_barrier.c"
+ 
+>> Compilation failure
+posix/subdir_rules.mk:51: recipe for target 'posix/pthread_barrier.obj' failed
+"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/pthread_barrier.c", line 41: fatal error #1965: cannot open source file "FreeRTOS.h"
+1 catastrophic error detected in the compilation of "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/pthread_barrier.c".
+Compilation terminated.
+gmake: *** [posix/pthread_barrier.obj] Error 1
+Building file: "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/pthread_mutex.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/sydantek4.1-workspace/freertos_builds_cc13x2_cc26x2_release_ccs" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/include" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/CCS/ARM_CM4F" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=ccs --define=DeviceFamily_CC13X2_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="posix/pthread_mutex.d_raw" --obj_directory="posix"  "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/pthread_mutex.c"
+ 
+>> Compilation failure
+posix/subdir_rules.mk:65: recipe for target 'posix/pthread_mutex.obj' failed
+"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/pthread_mutex.c", line 49: fatal error #1965: cannot open source file "FreeRTOS.h"
+1 catastrophic error detected in the compilation of "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/pthread_mutex.c".
+Compilation terminated.
+gmake: *** [posix/pthread_mutex.obj] Error 1
+Building file: "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/pthread_cond.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/sydantek4.1-workspace/freertos_builds_cc13x2_cc26x2_release_ccs" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/include" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/CCS/ARM_CM4F" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=ccs --define=DeviceFamily_CC13X2_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="posix/pthread_cond.d_raw" --obj_directory="posix"  "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/pthread_cond.c"
+ 
+>> Compilation failure
+posix/subdir_rules.mk:58: recipe for target 'posix/pthread_cond.obj' failed
+"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/pthread_cond.c", line 39: fatal error #1965: cannot open source file "FreeRTOS.h"
+1 catastrophic error detected in the compilation of "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/pthread_cond.c".
+Compilation terminated.
+gmake: *** [posix/pthread_cond.obj] Error 1
+Building file: "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/pthread_rwlock.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/sydantek4.1-workspace/freertos_builds_cc13x2_cc26x2_release_ccs" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/include" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/CCS/ARM_CM4F" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=ccs --define=DeviceFamily_CC13X2_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="posix/pthread_rwlock.d_raw" --obj_directory="posix"  "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/pthread_rwlock.c"
+ 
+>> Compilation failure
+posix/subdir_rules.mk:72: recipe for target 'posix/pthread_rwlock.obj' failed
+"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/pthread_rwlock.c", line 40: fatal error #1965: cannot open source file "FreeRTOS.h"
+1 catastrophic error detected in the compilation of "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/pthread_rwlock.c".
+Compilation terminated.
+gmake: *** [posix/pthread_rwlock.obj] Error 1
+Building file: "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/sched.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/sydantek4.1-workspace/freertos_builds_cc13x2_cc26x2_release_ccs" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/include" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/CCS/ARM_CM4F" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=ccs --define=DeviceFamily_CC13X2_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="posix/sched.d_raw" --obj_directory="posix"  "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/sched.c"
+ 
+>> Compilation failure
+posix/subdir_rules.mk:79: recipe for target 'posix/sched.obj' failed
+"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/sched.c", line 40: fatal error #1965: cannot open source file "FreeRTOS.h"
+1 catastrophic error detected in the compilation of "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/sched.c".
+Compilation terminated.
+gmake: *** [posix/sched.obj] Error 1
+Building file: "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/semaphore.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/sydantek4.1-workspace/freertos_builds_cc13x2_cc26x2_release_ccs" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/include" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/CCS/ARM_CM4F" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=ccs --define=DeviceFamily_CC13X2_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="posix/semaphore.d_raw" --obj_directory="posix"  "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/semaphore.c"
+ 
+>> Compilation failure
+posix/subdir_rules.mk:86: recipe for target 'posix/semaphore.obj' failed
+Building file: "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/sleep.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/sydantek4.1-workspace/freertos_builds_cc13x2_cc26x2_release_ccs" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/include" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/CCS/ARM_CM4F" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=ccs --define=DeviceFamily_CC13X2_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="posix/sleep.d_raw" --obj_directory="posix"  "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/sleep.c"
+ 
+>> Compilation failure
+posix/subdir_rules.mk:93: recipe for target 'posix/sleep.obj' failed
+"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/semaphore.c", line 42: fatal error #1965: cannot open source file "FreeRTOS.h"
+1 catastrophic error detected in the compilation of "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/semaphore.c".
+Compilation terminated.
+gmake: *** [posix/semaphore.obj] Error 1
+"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/sleep.c", line 41: fatal error #1965: cannot open source file "FreeRTOS.h"
+1 catastrophic error detected in the compilation of "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/sleep.c".
+Compilation terminated.
+gmake: *** [posix/sleep.obj] Error 1
+Building file: "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/timer.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/sydantek4.1-workspace/freertos_builds_cc13x2_cc26x2_release_ccs" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/include" --include_path="C:/FreeRTOSv202104.00/FreeRTOS/Source/portable/CCS/ARM_CM4F" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=ccs --define=DeviceFamily_CC13X2_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="posix/timer.d_raw" --obj_directory="posix"  "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/timer.c"
+ 
+>> Compilation failure
+posix/subdir_rules.mk:100: recipe for target 'posix/timer.obj' failed
+"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/timer.c", line 41: fatal error #1965: cannot open source file "FreeRTOS.h"
+1 catastrophic error detected in the compilation of "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/freertos/timer.c".
+Compilation terminated.
+gmake: *** [posix/timer.obj] Error 1
+gmake: Target 'all' not remade because of errors.
+
+**** Build Finished ****
