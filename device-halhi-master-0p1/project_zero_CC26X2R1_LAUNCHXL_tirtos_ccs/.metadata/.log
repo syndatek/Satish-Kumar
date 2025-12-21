@@ -1,0 +1,246 @@
+!SESSION 2021-07-07 10:51:36.116 -----------------------------------------------
+eclipse.buildId=4.14.0.I20191210-0610
+java.version=1.8.0_144
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_IN
+Framework arguments:  -product com.ti.ccstudio.branding.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product com.ti.ccstudio.branding.product
+
+This is a continuation of log file C:\tibackup\device-halhi-master-0p1\project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs\.metadata\.bak_0.log
+Created Time: 2021-07-07 10:56:21.945
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:21.947
+!MESSAGE DS_ERROR: Cortex_M4_0: Error: (Error -1170 @ 0x0) Unable to access the DAP. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:22.040
+!MESSAGE DS_ERROR: Cortex_M4_0: Trouble Halting Target CPU: (Error -2064 @ 0x0) Unable to read device status. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:22.125
+!MESSAGE DS_ERROR: Cortex_M4_0: Error: (Error -1170 @ 0x0) Unable to access the DAP. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:22.195
+!MESSAGE DS_ERROR: Cortex_M4_0: Trouble Halting Target CPU: (Error -2064 @ 0x0) Unable to read device status. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:22.314
+!MESSAGE DS_ERROR: Cortex_M4_0: Error: (Error -1170 @ 0x0) Unable to access the DAP. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:22.486
+!MESSAGE DS_ERROR: Cortex_M4_0: Trouble Halting Target CPU: (Error -2064 @ 0x0) Unable to read device status. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:22.578
+!MESSAGE DS_ERROR: Cortex_M4_0: Error: (Error -1170 @ 0x0) Unable to access the DAP. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:22.806
+!MESSAGE DS_ERROR: Cortex_M4_0: Trouble Halting Target CPU: (Error -2062 @ 0x0) Unable to halt device. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:22.940
+!MESSAGE DS_ERROR: Cortex_M4_0: Error: (Error -1170 @ 0x0) Unable to access the DAP. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:23.033
+!MESSAGE DS_ERROR: Cortex_M4_0: Trouble Halting Target CPU: (Error -2064 @ 0x0) Unable to read device status. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:23.126
+!MESSAGE DS_ERROR: Cortex_M4_0: Error: (Error -1170 @ 0x0) Unable to access the DAP. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:23.237
+!MESSAGE DS_ERROR: Cortex_M4_0: Trouble Halting Target CPU: (Error -2064 @ 0x0) Unable to read device status. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:23.325
+!MESSAGE DS_ERROR: Cortex_M4_0: Error: (Error -1170 @ 0x0) Unable to access the DAP. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:23.409
+!MESSAGE DS_ERROR: Cortex_M4_0: Trouble Halting Target CPU: (Error -2064 @ 0x0) Unable to read device status. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:23.557
+!MESSAGE DS_ERROR: Cortex_M4_0: Error: (Error -1170 @ 0x0) Unable to access the DAP. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:23.641
+!MESSAGE DS_ERROR: Cortex_M4_0: Trouble Halting Target CPU: (Error -2064 @ 0x0) Unable to read device status. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:23.726
+!MESSAGE DS_ERROR: Cortex_M4_0: Error: (Error -1170 @ 0x0) Unable to access the DAP. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:23.802
+!MESSAGE DS_ERROR: Cortex_M4_0: Trouble Halting Target CPU: (Error -2064 @ 0x0) Unable to read device status. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:23.886
+!MESSAGE DS_ERROR: Cortex_M4_0: Error: (Error -1170 @ 0x0) Unable to access the DAP. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:23.950
+!MESSAGE DS_ERROR: Cortex_M4_0: Trouble Halting Target CPU: (Error -2064 @ 0x0) Unable to read device status. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:24.020
+!MESSAGE DS_ERROR: Cortex_M4_0: Error: (Error -1170 @ 0x0) Unable to access the DAP. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:24.120
+!MESSAGE DS_ERROR: Cortex_M4_0: Trouble Halting Target CPU: (Error -2064 @ 0x0) Unable to read device status. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:24.207
+!MESSAGE DS_ERROR: Cortex_M4_0: Error: (Error -1170 @ 0x0) Unable to access the DAP. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:24.324
+!MESSAGE DS_ERROR: Cortex_M4_0: Trouble Halting Target CPU: (Error -2064 @ 0x0) Unable to read device status. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:24.418
+!MESSAGE DS_ERROR: Cortex_M4_0: Error: (Error -1170 @ 0x0) Unable to access the DAP. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:24.490
+!MESSAGE DS_ERROR: Cortex_M4_0: Trouble Halting Target CPU: (Error -2064 @ 0x0) Unable to read device status. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:24.583
+!MESSAGE DS_ERROR: Cortex_M4_0: Error: (Error -1170 @ 0x0) Unable to access the DAP. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:24.675
+!MESSAGE DS_ERROR: Cortex_M4_0: Trouble Halting Target CPU: (Error -2064 @ 0x0) Unable to read device status. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:24.731
+!MESSAGE DS_ERROR: Cortex_M4_0: Error: (Error -1170 @ 0x0) Unable to access the DAP. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:24.853
+!MESSAGE DS_ERROR: Cortex_M4_0: Trouble Halting Target CPU: (Error -2064 @ 0x0) Unable to read device status. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:24.941
+!MESSAGE DS_ERROR: Cortex_M4_0: Error: (Error -1170 @ 0x0) Unable to access the DAP. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:25.003
+!MESSAGE DS_ERROR: Cortex_M4_0: Trouble Halting Target CPU: (Error -2064 @ 0x0) Unable to read device status. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:25.095
+!MESSAGE DS_ERROR: Cortex_M4_0: Error: (Error -1170 @ 0x0) Unable to access the DAP. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:25.173
+!MESSAGE DS_ERROR: Cortex_M4_0: Trouble Halting Target CPU: (Error -2064 @ 0x0) Unable to read device status. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:25.267
+!MESSAGE DS_ERROR: Cortex_M4_0: Error: (Error -1170 @ 0x0) Unable to access the DAP. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:25.361
+!MESSAGE DS_ERROR: Cortex_M4_0: Trouble Halting Target CPU: (Error -2064 @ 0x0) Unable to read device status. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:25.475
+!MESSAGE DS_ERROR: Cortex_M4_0: Error: (Error -1170 @ 0x0) Unable to access the DAP. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:25.566
+!MESSAGE DS_ERROR: Cortex_M4_0: Trouble Halting Target CPU: (Error -2064 @ 0x0) Unable to read device status. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:25.654
+!MESSAGE DS_ERROR: Cortex_M4_0: Unable to determine target status after 20 attempts
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 10:56:25.658
+!MESSAGE DS_ERROR: Cortex_M4_0: Failed to remove the debug state from the target before disconnecting.  There may still be breakpoint op-codes embedded in program memory.  It is recommended that you reset the emulator before you connect and reload your program before you continue debugging
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 11:01:26.676
+!MESSAGE DS_ERROR: CS_DAP_0: Error: (Error -261 @ 0x0) Invalid response was received from the XDS110. (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 11:01:27.156
+!MESSAGE DS_ERROR: CS_DAP_0: Unable to determine target status after 20 attempts
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 11:01:27.183
+!MESSAGE DS_ERROR: CS_DAP_0: Failed to remove the debug state from the target before disconnecting.  There may still be breakpoint op-codes embedded in program memory.  It is recommended that you reset the emulator before you connect and reload your program before you continue debugging
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 11:01:27.471
+!MESSAGE DS_ERROR: Cortex_M4_0: JTAG Communication Error: (Error -261 @ 0x0) Invalid response was received from the XDS110. (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 11:01:27.474
+!MESSAGE DS_ERROR: Cortex_M4_0: Breakpoint Manager: Remove job failed: Register/memory write failure[22005]
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-07-07 11:01:27.654
+!MESSAGE DS_ERROR: Cortex_M4_0: Failed to remove the debug state from the target before disconnecting.  There may still be breakpoint op-codes embedded in program memory.  It is recommended that you reset the emulator before you connect and reload your program before you continue debugging
+
+!SESSION 2021-07-09 13:47:30.791 -----------------------------------------------
+eclipse.buildId=4.14.0.I20191210-0610
+java.version=1.8.0_144
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_IN
+Framework arguments:  -product com.ti.ccstudio.branding.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product com.ti.ccstudio.branding.product
+
+!ENTRY com.ti.common.core 1 0 2021-07-09 13:47:55.450
+!MESSAGE path=ccs_base/DebugServer
+
+!ENTRY com.ti.common.core 1 0 2021-07-09 13:47:55.453
+!MESSAGE debugServerDir=C:/ti/ccs1011/ccs/ccs_base/DebugServer
+
+!ENTRY com.ti.ccstudio.ui 1 0 2021-07-09 13:48:14.495
+!MESSAGE CCS IDE session started!
+	CCS build: 10.1.1.00004
+	CCS location: C:/ti/ccs1011/ccs
+	Workspace location: C:/tibackup/device-halhi-master-0p1/project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-07-09 13:48:15.310
+!MESSAGE constructor
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-07-09 13:48:15.315
+!MESSAGE done with directories
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-07-09 13:48:15.317
+!MESSAGE loading ti_logger
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-07-09 13:48:15.320
+!MESSAGE Platform os: win32
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-07-09 13:48:15.322
+!MESSAGE loading cToolsIF
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-07-09 13:48:15.353
+!MESSAGE loading cTools
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-07-09 13:48:15.361
+!MESSAGE loading TraceFactory
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-07-09 13:48:15.366
+!MESSAGE loading sqlite3
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-07-09 13:48:15.392
+!MESSAGE loading CloudTrace
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-07-09 13:48:15.435
+!MESSAGE CloudTrace interface loaded
+
+!ENTRY com.ti.ccstudio.project.ui.webcontent 1 0 2021-07-09 13:48:15.790
+!MESSAGE CCS HTTP adapter started! [ccs.port:57937] - Open 'http://localhost:57937/ide' in web browser to see listing of available APIs...

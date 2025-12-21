@@ -1,0 +1,48 @@
+
+**** Build of configuration Debug for project uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs ****
+
+"C:\\ti\\ccs1011\\ccs\\utils\\bin\\gmake" -k -j 4 all -O 
+ 
+Building file: "../uartecho.syscfg"
+Invoking: SysConfig
+"C:/ti/ccs1011/ccs/utils/sysconfig_1.6.0/sysconfig_cli.bat" -s "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/.metadata/product.json" -o "syscfg" --compiler ccs "../uartecho.syscfg"
+Running script...
+Validating...
+Generating Code...
+Writing C:\tibackup\device-halhi-master-0p1\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\Debug\syscfg\ti_devices_config.c...
+Writing C:\tibackup\device-halhi-master-0p1\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\Debug\syscfg\ti_drivers_config.c...
+Writing C:\tibackup\device-halhi-master-0p1\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\Debug\syscfg\ti_drivers_config.h...
+Writing C:\tibackup\device-halhi-master-0p1\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\Debug\syscfg\ti_utils_build_linker.cmd.genlibs...
+Writing C:\tibackup\device-halhi-master-0p1\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\Debug\syscfg\syscfg_c.rov.xs...
+Writing C:\tibackup\device-halhi-master-0p1\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\Debug\syscfg\ti_utils_runtime_model.gv...
+Writing C:\tibackup\device-halhi-master-0p1\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\Debug\syscfg\ti_utils_runtime_Makefile...
+Finished building: "../uartecho.syscfg"
+ 
+Building file: "../main_tirtos.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/device-halhi-master-0p1/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs" --include_path="C:/tibackup/device-halhi-master-0p1/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/Debug" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=DeviceFamily_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="main_tirtos.d_raw" --include_path="C:/tibackup/device-halhi-master-0p1/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/Debug/syscfg" --cmd_file="C:/tibackup/device-halhi-master-0p1/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/tirtos_builds_cc13x2_cc26x2_release_ccs/Debug/configPkg/compiler.opt"  "../main_tirtos.c"
+Finished building: "../main_tirtos.c"
+ 
+Building file: "../uartecho.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/device-halhi-master-0p1/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs" --include_path="C:/tibackup/device-halhi-master-0p1/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/Debug" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=DeviceFamily_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="uartecho.d_raw" --include_path="C:/tibackup/device-halhi-master-0p1/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/Debug/syscfg" --cmd_file="C:/tibackup/device-halhi-master-0p1/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/tirtos_builds_cc13x2_cc26x2_release_ccs/Debug/configPkg/compiler.opt"  "../uartecho.c"
+Finished building: "../uartecho.c"
+ 
+Building file: "syscfg/ti_devices_config.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/device-halhi-master-0p1/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs" --include_path="C:/tibackup/device-halhi-master-0p1/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/Debug" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=DeviceFamily_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="syscfg/ti_devices_config.d_raw" --include_path="C:/tibackup/device-halhi-master-0p1/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/Debug/syscfg" --obj_directory="syscfg" --cmd_file="C:/tibackup/device-halhi-master-0p1/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/tirtos_builds_cc13x2_cc26x2_release_ccs/Debug/configPkg/compiler.opt"  "syscfg/ti_devices_config.c"
+Finished building: "syscfg/ti_devices_config.c"
+ 
+Building file: "syscfg/ti_drivers_config.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/device-halhi-master-0p1/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs" --include_path="C:/tibackup/device-halhi-master-0p1/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/Debug" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=DeviceFamily_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="syscfg/ti_drivers_config.d_raw" --include_path="C:/tibackup/device-halhi-master-0p1/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/Debug/syscfg" --obj_directory="syscfg" --cmd_file="C:/tibackup/device-halhi-master-0p1/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/tirtos_builds_cc13x2_cc26x2_release_ccs/Debug/configPkg/compiler.opt"  "syscfg/ti_drivers_config.c"
+Finished building: "syscfg/ti_drivers_config.c"
+ 
+Building target: "uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs.out"
+Invoking: ARM Linker
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --define=DeviceFamily_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on -z -m"uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs.map" -i"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" -i"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/tirtos/packages" -i"C:/tibackup/device-halhi-master-0p1/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/Debug/syscfg/" -i"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/lib" --diag_wrap=off --display_error_number --warn_sections --xml_link_info="uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs_linkInfo.xml" --rom_model -o "uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs.out" "./main_tirtos.obj" "./uartecho.obj" "./syscfg/ti_devices_config.obj" "./syscfg/ti_drivers_config.obj" "../cc13x2_cc26x2_tirtos.cmd" -lti_utils_build_linker.cmd.genlibs -l"C:/tibackup/device-halhi-master-0p1/uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/tirtos_builds_cc13x2_cc26x2_release_ccs/Debug/configPkg/linker.cmd"  -l"ti/devices/cc13x2_cc26x2/driverlib/bin/ccs/driverlib.lib" -llibc.a 
+<Linking>
+Finished building target: "uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs.out"
+ 
+
+**** Build Finished ****

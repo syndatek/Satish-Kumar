@@ -1,0 +1,14 @@
+[
+  {
+    "name": "simplelink_cc13x2_26x2_sdk",
+    "version": "4.30.00.54",
+    "path": "C:\\ti\\simplelink_cc13x2_26x2_sdk_4_30_00_54\\.metadata\\product.json",
+    "displayName": "SimpleLink cc13x2/26x2 SDK"
+  },
+  {
+    "name": "simplelink_cc2640r2_sdk",
+    "version": "4.20.00.04",
+    "path": "C:\\ti\\simplelink_cc2640r2_sdk_4_20_00_04\\.metadata\\product.json",
+    "displayName": "SimpleLink CC2640R2 SDK"
+  }
+]

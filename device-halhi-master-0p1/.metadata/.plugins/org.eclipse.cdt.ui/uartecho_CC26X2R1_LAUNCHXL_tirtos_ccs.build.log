@@ -1,0 +1,61 @@
+
+**** Build of configuration Debug for project uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs ****
+
+"C:\\ti\\ccs1011\\ccs\\utils\\bin\\gmake" -k -j 4 all -O 
+ 
+Building file: "../tirtos_builds_cc13x2_cc26x2_release_ccs/Debug/configPkg/package/build.cfg"
+Building file: "../tirtos_builds_cc13x2_cc26x2_release_ccs/Debug/configPkg/package/cfg/release_pem4f.cfg"
+Building file: "../tirtos_builds_cc13x2_cc26x2_release_ccs/release.cfg"
+Invoking: XDCtools
+Invoking: XDCtools
+"C:/ti/ccs1011/xdctools_3_61_02_27_core/xs" --xdcpath="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source;C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/tirtos/packages;C:/ti/simplelink_cc2640r2_sdk_4_20_00_04/source;C:/ti/simplelink_cc2640r2_sdk_4_20_00_04/kernel/tirtos/packages;C:/ti/simplelink_cc2640r2_sdk_ble_example_pack_1_50_00_62/source;C:/ti/simplelink_cc26x2_sdk_2_20_00_36/source;C:/ti/simplelink_cc26x2_sdk_2_20_00_36/kernel/tirtos/packages;" xdc.tools.configuro -o configPkg -t ti.targets.arm.elf.M4F -r debug -c "C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS" "../tirtos_builds_cc13x2_cc26x2_release_ccs/Debug/configPkg/package/cfg/release_pem4f.cfg"
+"C:/ti/ccs1011/xdctools_3_61_02_27_core/xs" --xdcpath="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source;C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/tirtos/packages;C:/ti/simplelink_cc2640r2_sdk_4_20_00_04/source;C:/ti/simplelink_cc2640r2_sdk_4_20_00_04/kernel/tirtos/packages;C:/ti/simplelink_cc2640r2_sdk_ble_example_pack_1_50_00_62/source;C:/ti/simplelink_cc26x2_sdk_2_20_00_36/source;C:/ti/simplelink_cc26x2_sdk_2_20_00_36/kernel/tirtos/packages;" xdc.tools.configuro -o configPkg -t ti.targets.arm.elf.M4F -r debug -c "C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS" "../tirtos_builds_cc13x2_cc26x2_release_ccs/Debug/configPkg/package/build.cfg"
+Invoking: XDCtools
+"C:/ti/ccs1011/xdctools_3_61_02_27_core/xs" --xdcpath="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source;C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/tirtos/packages;C:/ti/simplelink_cc2640r2_sdk_4_20_00_04/source;C:/ti/simplelink_cc2640r2_sdk_4_20_00_04/kernel/tirtos/packages;C:/ti/simplelink_cc2640r2_sdk_ble_example_pack_1_50_00_62/source;C:/ti/simplelink_cc26x2_sdk_2_20_00_36/source;C:/ti/simplelink_cc26x2_sdk_2_20_00_36/kernel/tirtos/packages;" xdc.tools.configuro -o configPkg -t ti.targets.arm.elf.M4F -r debug -c "C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS" "../tirtos_builds_cc13x2_cc26x2_release_ccs/release.cfg"
+Building file: "../uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/uartecho.syscfg"
+Invoking: SysConfig
+"C:/ti/ccs1011/ccs/utils/sysconfig_1.6.0/sysconfig_cli.bat" -s "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/.metadata/product.json" -s "C:/ti/simplelink_cc2640r2_sdk_4_20_00_04/.metadata/product.json" -o "syscfg" --compiler ccs "../uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/uartecho.syscfg"
+Running script...
+Validating...
+Generating Code...
+Writing C:\tibackup\device-halhi-master-0p1\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\Debug\syscfg\ti_devices_config.c...
+Writing C:\tibackup\device-halhi-master-0p1\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\Debug\syscfg\ti_drivers_config.c...
+Writing C:\tibackup\device-halhi-master-0p1\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\Debug\syscfg\ti_drivers_config.h...
+Writing C:\tibackup\device-halhi-master-0p1\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\Debug\syscfg\ti_utils_build_linker.cmd.genlibs...
+Writing C:\tibackup\device-halhi-master-0p1\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\Debug\syscfg\syscfg_c.rov.xs...
+Writing C:\tibackup\device-halhi-master-0p1\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\Debug\syscfg\ti_utils_runtime_model.gv...
+Writing C:\tibackup\device-halhi-master-0p1\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\Debug\syscfg\ti_utils_runtime_Makefile...
+Unchanged C:\tibackup\device-halhi-master-0p1\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\Debug\syscfg\ti_drivers_config.c...
+Unchanged C:\tibackup\device-halhi-master-0p1\uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs\Debug\syscfg\ti_drivers_config.h...
+because: Permission denied
+because: Permission denied
+C:/ti/ccs1011/xdctools_3_61_02_27_core/bin/xdcenv: can't open '.xdcenv.mak', xdctools_3_61_02_27_core\gmake.exe: *** Deleting file '.xdcenv.mak'
+xdctools_3_61_02_27_core\gmake.exe: unlink: .xdcenv.mak: Permission denied
+xdctools_3_61_02_27_core\gmake.exe: *** No rule to make target '.configuro'.  Stop.
+C:/ti/ccs1011/xdctools_3_61_02_27_core/bin/xdcenv: can't open '.xdcenv.mak', xdctools_3_61_02_27_core\gmake.exe: *** Deleting file '.xdcenv.mak'
+xdctools_3_61_02_27_core\gmake.exe: *** No rule to make target '.configuro'.  Stop.
+Finished building: "../uartecho_CC26X2R1_LAUNCHXL_tirtos_ccs/uartecho.syscfg"
+ 
+tirtos_builds_cc13x2_cc26x2_release_ccs/subdir_rules.mk:12: recipe for target 'build-1718096031-inproc' failed
+js: "C:/ti/ccs1011/xdctools_3_61_02_27_core/packages/xdc/tools/Cmdr.xs", line 52: Error: xdc.tools.configuro: configuration failed due to earlier errors (status = 2); 'linker.cmd' deleted.
+js: "C:/ti/ccs1011/xdctools_3_61_02_27_core/packages/xdc/tools/Cmdr.xs", line 52: Error: xdc.tools.configuro: configuration failed due to earlier errors (status = 2); 'linker.cmd' deleted.
+gmake[1]: *** [build-1718096031-inproc] Error 1
+tirtos_builds_cc13x2_cc26x2_release_ccs/subdir_rules.mk:9: recipe for target 'build-1718096031' failed
+gmake: *** [build-1718096031] Error 2
+tirtos_builds_cc13x2_cc26x2_release_ccs/Debug/configPkg/package/subdir_rules.mk:12: recipe for target 'build-2000468353-inproc' failed
+gmake[1]: *** [build-2000468353-inproc] Error 1
+tirtos_builds_cc13x2_cc26x2_release_ccs/Debug/configPkg/package/subdir_rules.mk:9: recipe for target 'build-2000468353' failed
+gmake: *** [build-2000468353] Error 2
+making package.mak (because of package.bld) ...
+generating interfaces for package configPkg (because package/package.xdc.inc is older than package.xdc) ...
+configuring release.xem4f from package/cfg/release_pem4f.cfg ...
+tirtos_builds_cc13x2_cc26x2_release_ccs/Debug/configPkg/package/cfg/subdir_rules.mk:19: recipe for target 'build-109320191-inproc' failed
+js: "./package/cfg/release_pem4f.cfg", line 145: xdc.services.global.XDCException: xdc.PACKAGE_NOT_FOUND: can't locate the package 'ti.platforms.tiva' along the path: 'C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source;C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/tirtos/packages;C:/ti/simplelink_cc2640r2_sdk_4_20_00_04/source;C:/ti/simplelink_cc2640r2_sdk_4_20_00_04/kernel/tirtos/packages;C:/ti/simplelink_cc2640r2_sdk_ble_example_pack_1_50_00_62/source;C:/ti/simplelink_cc26x2_sdk_2_20_00_36/source;C:/ti/simplelink_cc26x2_sdk_2_20_00_36/kernel/tirtos/packages;C:/ti/ccs1011/xdctools_3_61_02_27_core/packages;..;'. Ensure that the package path is set correctly.
+gmake.exe: *** [package.mak:202: package/cfg/release_pem4f.xdl] Error 1
+js: "C:/ti/ccs1011/xdctools_3_61_02_27_core/packages/xdc/tools/Cmdr.xs", line 52: Error: xdc.tools.configuro: configuration failed due to earlier errors (status = 2); 'linker.cmd' deleted.
+gmake[1]: *** [build-109320191-inproc] Error 1
+gmake: *** [build-109320191] Error 2
+tirtos_builds_cc13x2_cc26x2_release_ccs/Debug/configPkg/package/cfg/subdir_rules.mk:16: recipe for target 'build-109320191' failed
+gmake: Target 'all' not remade because of errors.
+
+**** Build Finished ****
