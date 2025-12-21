@@ -1,0 +1,76 @@
+
+**** Build of configuration Release for project project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs ****
+
+"C:\\ti\\ccs1011\\ccs\\utils\\bin\\gmake" -k -j 4 all -O 
+ 
+making ../src/sysbios/rom_sysbios.aem4f ...
+gmake[1]: Nothing to be done for 'all'.
+Building file: "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/common/cc26xx/uartlog/UartLog.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" --cmd_file="C:/tibackup/SydantekVer4.1_Workspace_ref/project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs/Release/syscfg/ti_ble_app_config.opt" --cmd_file="C:/tibackup/SydantekVer4.1_Workspace_ref/project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs/Release/syscfg/ti_build_config.opt" --cmd_file="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/config/build_components.opt" --cmd_file="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/config/factory_config.opt"  -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me -O4 --opt_for_speed=0 --include_path="C:/tibackup/SydantekVer4.1_Workspace_ref/project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs" --include_path="C:/tibackup/SydantekVer4.1_Workspace_ref/project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs/Release" --include_path="C:/tibackup/SydantekVer4.1_Workspace_ref/project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs/Application" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/common/cc26xx/" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/boards/CC26X2R1_LAUNCHXL/" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/drivers/nvs/" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/common/cc26xx/oad/" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/profiles/oad/cc26xx" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/tirtos/packages" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/controller/cc26xx/inc" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/inc" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/rom" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/common/cc26xx" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/icall/inc" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/hal/src/target/_common" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/hal/src/target/_common/cc26xx" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/hal/src/inc" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/heapmgr" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/profiles/dev_info" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/profiles/simple_profile" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/icall/src/inc" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/osal/src/inc" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/services/src/saddr" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/services/src/sdata" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/common/nv" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/common/cc26xx" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/devices/cc13x2_cc26x2" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=SECURITY --define=uartlog_FILE="\"UartLog.c\"" --define=DeviceFamily_CC26X2 --define=FLASH_ROM_BUILD --define=NVOCMP_NWSAMEITEM=1 -g --c99 --gcc --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --abi=eabi --preproc_with_compile --preproc_dependency="Startup/UartLog.d_raw" --include_path="C:/tibackup/SydantekVer4.1_Workspace_ref/project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs/Release/syscfg" --obj_directory="Startup" --cmd_file="syscfg/ti_build_config.opt" --cmd_file="syscfg/ti_ble_app_config.opt" --cmd_file="configPkg/compiler.opt"  "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/common/cc26xx/uartlog/UartLog.c"
+Finished building: "C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/common/cc26xx/uartlog/UartLog.c"
+ 
+making ../src/sysbios/rom_sysbios.aem4f ...
+gmake[2]: Nothing to be done for 'all'.
+Building target: "project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs.out"
+Invoking: ARM Linker
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" --cmd_file="C:/tibackup/SydantekVer4.1_Workspace_ref/project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs/Release/syscfg/ti_ble_app_config.opt" --cmd_file="C:/tibackup/SydantekVer4.1_Workspace_ref/project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs/Release/syscfg/ti_build_config.opt" --cmd_file="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/config/build_components.opt" --cmd_file="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/config/factory_config.opt"  -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me -O4 --opt_for_speed=0 --define=SECURITY --define=uartlog_FILE="\"\"" --define=DeviceFamily_CC26X2 --define=FLASH_ROM_BUILD --define=NVOCMP_NWSAMEITEM=1 -g --c99 --gcc --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --abi=eabi -z -m"project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs.map" -i"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" -i"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/tirtos/packages" -i"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/lib" --reread_libs --define=FLASH_ROM_BUILD=2 --define=OAD_IMG_E=1 --define=SECURITY --diag_suppress=16002-D --diag_suppress=10247-D --diag_suppress=10325-D --diag_suppress=10229-D --diag_suppress=16032-D --diag_wrap=off --display_error_number --warn_sections --xml_link_info="project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs_linkInfo.xml" --rom_model -o "project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs.out" "./syscfg/ti_ble_config.obj" "./syscfg/ti_radio_config.obj" "./syscfg/ti_drivers_config.obj" "./Application/project_zero.obj" "./Application/util.obj" "./Drivers/NV/crc.obj" "./Drivers/NV/nvocmp.obj" "./OAD/crc32.obj" "./OAD/flash_interface_ext_rtos_NVS.obj" "./OAD/oad.obj" "./OAD/oad_image_header_app.obj" "./Profiles/button_service.obj" "./Profiles/data_service.obj" "./Profiles/devinfoservice.obj" "./Profiles/gatt_uuid.obj" "./Profiles/gattservapp_util.obj" "./Profiles/led_service.obj" "./Startup/UartLog.obj" "./Startup/ble_user_config_stack.obj" "./Startup/main.obj" "./Startup/osal_icall_ble.obj" "./Startup/rom_init.obj" "./iCall/icall.obj" "./iCall/icall_cc2650.obj" "./iCall/icall_user_config.obj" "./iCallBLE/ble_user_config.obj" "./iCallBLE/icall_api_lite.obj" -l"configPkg/linker.cmd"  -l"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/examples/rtos/CC26X2R1_LAUNCHXL/ble5stack/project_zero/tirtos/ccs/cc13x2_cc26x2_app.cmd" -l"C:/tibackup/SydantekVer4.1_Workspace_ref/project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs/Release/syscfg/ti_utils_build_linker.cmd.genlibs" -l"ti/devices/cc13x2_cc26x2/driverlib/bin/ccs/driverlib.lib" -llibc.a 
+<Linking>
+Finished building target: "project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs.out"
+ 
+C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armhex -order MS --memwidth=8 --romwidth=8 --intel -o project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs.hex project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs.out
+Translating to Intel format...
+   "project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs.out" .image_header ==> .image_header
+   "project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs.out" .resetVecs ==> .resetVecs
+   "project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs.out" .text ==> .text
+   "project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs.out" .const ==> .const
+   "project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs.out" .rodata ==> .rodata
+   "project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs.out" .cinit ==> .cinit
+C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/tools/common/oad/oad_image_tool --verbose ccs C:/tibackup/SydantekVer4.1_Workspace_ref/project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs 7 -hex1 Release/project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs.hex -k C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/tools/common/oad/private.pem -o Release/project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs_oad
+ 
+____________________________
+       OAD IMG HDR
+____________________________
+Field       |    Value
+imgID       |    b'CC26x2R1'
+CRC         |    0xF66851CA
+bimVer      |    3
+metaVer     |    1
+techType    |    0xFFFE
+imgCpStat   |    0xFF
+crcStat     |    0xFF
+imgType     |    0x7
+imgNo       |    0x0
+imgVld      |    0xFFFFFFFF
+len         |    0x1E6B4
+prgEntry    |    0x90
+softVer     |    0x31303030
+imgEndAddr  |    0x1E6B3
+hdrLen      |    0x2C
+ 
+ 
+____________________________
+       Segment HDR
+____________________________
+Field            |      Value
+Segment Type     |      Security Segment
+Wireless Tech    |      [BLE]
+Segment Length   |      0x55
+Security Version |      0x1
+Timestamp        |      0x60E5364B
+Signer Info      |      0x8B10EC1D517D17B0
+Signature        |      0x2470B4D346924B234347F52D8F916594F885B5DDD53A90C3D4CB66DB7B10E85599BCD10DFDD840B3D3BA59CADD9FDDF61939E2B9E9AFE401CF7D0EDEAFCC21C
+ 
+ 
+____________________________
+        Segment HDR
+____________________________
+Field            |      Value
+Segment Type     |      Contiguous Image Segment
+Wireless Tech    |      [BLE]
+Segment Length   |      0x1E633
+Start Address    |      0x0
+ 
+ 
+
+**** Build Finished ****
