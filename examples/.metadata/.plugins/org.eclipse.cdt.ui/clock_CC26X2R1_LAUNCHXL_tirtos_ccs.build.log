@@ -1,0 +1,22 @@
+
+**** Build of configuration Debug for project clock_CC26X2R1_LAUNCHXL_tirtos_ccs ****
+
+"C:\\ti\\ccs1011\\ccs\\utils\\bin\\gmake" -k -j 4 all -O 
+ 
+making ../src/sysbios/rom_sysbios.aem4f ...
+gmake[1]: Nothing to be done for 'all'.
+Building file: "../clock.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --include_path="C:/tibackup/examples/clock_CC26X2R1_LAUNCHXL_tirtos_ccs" --include_path="C:/tibackup/examples/clock_CC26X2R1_LAUNCHXL_tirtos_ccs/Debug" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=DeviceFamily_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --preproc_with_compile --preproc_dependency="clock.d_raw" --include_path="C:/tibackup/examples/clock_CC26X2R1_LAUNCHXL_tirtos_ccs/Debug/syscfg" --cmd_file="configPkg/compiler.opt"  "../clock.c"
+Finished building: "../clock.c"
+ 
+making ../src/sysbios/rom_sysbios.aem4f ...
+gmake[2]: Nothing to be done for 'all'.
+Building target: "clock_CC26X2R1_LAUNCHXL_tirtos_ccs.out"
+Invoking: ARM Linker
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --define=DeviceFamily_CC26X2 -g --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on -z -m"clock_CC26X2R1_LAUNCHXL_tirtos_ccs.map" -i"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" -i"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/tirtos/packages" -i"C:/tibackup/examples/clock_CC26X2R1_LAUNCHXL_tirtos_ccs/Debug/syscfg/" -i"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/lib" --diag_wrap=off --display_error_number --warn_sections --xml_link_info="clock_CC26X2R1_LAUNCHXL_tirtos_ccs_linkInfo.xml" --rom_model -o "clock_CC26X2R1_LAUNCHXL_tirtos_ccs.out" "./clock.obj" "./syscfg/ti_devices_config.obj" "./syscfg/ti_drivers_config.obj" "../cc13x2_cc26x2_tirtos.cmd" -l"configPkg/linker.cmd"  -lti_utils_build_linker.cmd.genlibs -l"ti/devices/cc13x2_cc26x2/driverlib/bin/ccs/driverlib.lib" -llibc.a 
+<Linking>
+Finished building target: "clock_CC26X2R1_LAUNCHXL_tirtos_ccs.out"
+ 
+
+**** Build Finished ****

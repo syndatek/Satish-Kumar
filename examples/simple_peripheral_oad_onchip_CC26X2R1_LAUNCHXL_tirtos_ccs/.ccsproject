@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?ccsproject version="1.0"?>
+<projectOptions>
+	<ccsVersion value="10.1.1"/>
+	<deviceVariant value="Cortex M.CC2642R1F"/>
+	<deviceFamily value="TMS470"/>
+	<deviceEndianness value="little"/>
+	<codegenToolVersion value="20.2.1.LTS"/>
+	<isElfFormat value="true"/>
+	<linkerCommandFile value="cc26xx_app_and_stack_agama_oad_onchip.cmd"/>
+	<rts value="libc.a"/>
+	<createSlaveProjects value=""/>
+	<templateProperties value="id=simple_peripheral_oad_onchip_CC26X2R1_LAUNCHXL_tirtos_ccs.projectspec.simple_peripheral_oad_onchip_CC26X2R1_LAUNCHXL_tirtos_ccs,type=rtsc,products=,xdcToolsVersion=3.61.01.25.core,target=ti.targets.arm.elf.M4F,platform=ti.platforms.simplelink:CC2642R1F,buildProfile=release,isHybrid=true,configuroOptions=--compileOptions ${COMPILER_FLAGS} --xdcpath ${SRC_BLE_DIR}/../../../source;${SRC_BLE_DIR}/../../../kernel/tirtos/packages;${SRC_BLE_DIR} --cfgArgs {OAD_IMG_B:1}"/>
+	<origin value="C:\ti\simplelink_cc13x2_26x2_sdk_4_30_00_54\examples\rtos\CC26X2R1_LAUNCHXL\ble5stack\simple_peripheral_oad_onchip\tirtos\ccs\simple_peripheral_oad_onchip_CC26X2R1_LAUNCHXL_tirtos_ccs.projectspec"/>
+	<filesToOpen value=""/>
+</projectOptions>

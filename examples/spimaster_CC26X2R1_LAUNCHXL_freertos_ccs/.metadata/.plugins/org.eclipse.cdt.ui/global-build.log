@@ -1,0 +1,38 @@
+
+**** Clean-only build of configuration Debug for project spimaster_CC26X2R1_LAUNCHXL_freertos_ccs ****
+
+"C:\\ti\\ccs1011\\ccs\\utils\\bin\\gmake" -k -j 4 clean -O 
+ 
+DEL /F  "syscfg\error.h"  "spimaster_CC26X2R1_LAUNCHXL_freertos_ccs.hex"  "spimaster_CC26X2R1_LAUNCHXL_freertos_ccs.out" 
+DEL /F "main_freertos.obj" "spimaster.obj" 
+DEL /F "main_freertos.d" "spimaster.d" 
+RMDIR /S/Q  "syscfg\" 
+Could Not Find C:\tibackup\Device_spi_test\spimaster_CC26X2R1_LAUNCHXL_freertos_ccs\Debug\syscfg\error.h
+Could Not Find C:\tibackup\Device_spi_test\spimaster_CC26X2R1_LAUNCHXL_freertos_ccs\Debug\spimaster_CC26X2R1_LAUNCHXL_freertos_ccs.hex
+Could Not Find C:\tibackup\Device_spi_test\spimaster_CC26X2R1_LAUNCHXL_freertos_ccs\Debug\main_freertos.obj
+Could Not Find C:\tibackup\Device_spi_test\spimaster_CC26X2R1_LAUNCHXL_freertos_ccs\Debug\main_freertos.d
+Finished clean
+ 
+
+**** Build Finished ****
+Buildfile generation error occurred..
+Required variable 'FREERTOS_INSTALL_DIR' cannot be resolved or is pointing to a non-existent location. See 'Preferences > CCS > Build > Variables' page to define this variable before building this project.
+Build stopped..
+
+**** Clean-only build of configuration Debug for project spimaster_CC26X2R1_LAUNCHXL_freertos_ccs ****
+
+"C:\\ti\\ccs1011\\ccs\\utils\\bin\\gmake" -k -j 4 clean -O 
+ 
+DEL /F  "syscfg\error.h"  "spimaster_CC26X2R1_LAUNCHXL_freertos_ccs.hex"  "spimaster_CC26X2R1_LAUNCHXL_freertos_ccs.out" 
+DEL /F "main_freertos.obj" "spimaster.obj" 
+DEL /F "main_freertos.d" "spimaster.d" 
+RMDIR /S/Q  "syscfg\" 
+Could Not Find C:\tibackup\Device_spi_test\spimaster_CC26X2R1_LAUNCHXL_freertos_ccs\Debug\main_freertos.obj
+Could Not Find C:\tibackup\Device_spi_test\spimaster_CC26X2R1_LAUNCHXL_freertos_ccs\Debug\main_freertos.d
+Finished clean
+ 
+
+**** Build Finished ****
+Buildfile generation error occurred..
+Required variable 'FREERTOS_INSTALL_DIR' cannot be resolved or is pointing to a non-existent location. See 'Preferences > CCS > Build > Variables' page to define this variable before building this project.
+Build stopped..
