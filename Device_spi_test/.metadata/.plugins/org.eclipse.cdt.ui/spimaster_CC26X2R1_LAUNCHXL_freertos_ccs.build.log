@@ -1,0 +1,3 @@
+Buildfile generation error occurred..
+Required variable 'FREERTOS_INSTALL_DIR' cannot be resolved or is pointing to a non-existent location. See 'Preferences > CCS > Build > Variables' page to define this variable before building this project.
+Build stopped..
