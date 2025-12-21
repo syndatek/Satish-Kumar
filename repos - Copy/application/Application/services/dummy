@@ -1,0 +1,4747 @@
+/******************************************************************************
+
+ @file       heart_rate.c
+
+ @brief This file contains the Heart Rate sample application for use with the
+        CC26xx Bluetooth Low Energy Protocol Stack.
+
+ Group: CMCU, SCS
+ Target Device: CC2640R2
+
+ ******************************************************************************
+ 
+ Copyright (c) 2011-2017, Texas Instruments Incorporated
+ All rights reserved.
+
+ Redistribution and use in source and binary forms, with or without
+ modification, are permitted provided that the following conditions
+ are met:
+
+ *  Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+
+ *  Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+
+ *  Neither the name of Texas Instruments Incorporated nor the names of
+    its contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+ CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+ OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+ OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+ ******************************************************************************
+ Release Name: simplelink_cc2640r2_sdk_ble_example_pack_01_50_00_62
+ Release Date: 2017-11-01 10:38:41
+ *****************************************************************************/
+
+/*********************************************************************
+ * INCLUDES
+ */
+#include <string.h>
+
+#include <ti/sysbios/knl/Task.h>
+#include <ti/sysbios/knl/Clock.h>
+#include <ti/sysbios/knl/Event.h>
+#include <ti/sysbios/knl/Queue.h>
+#include <ti/display/Display.h>
+
+#include <icall.h>
+#include "util.h"
+/* This Header file contains all BLE API and icall structure definition */
+#include "icall_ble_api.h"
+
+#include "peripheral.h"
+#include "heartrateservice.h"
+#include "devinfoservice.h"
+#include "battservice.h"
+
+#include "board_key.h"
+#include "board.h"
+
+#include "heart_rate.h"
+#include "heart_rate.h"
+
+#include <ti/drivers/SPI.h>
+#include <ti/drivers/spi/SPICC26XXDMA.h>
+#include <ti/drivers/dma/UDMACC26XX.h>
+
+#include <ti/drivers/GPIO.h>
+#include <driverLib/timer.h>
+//#include "CC2640R2_LAUNCHXL.h"
+#include <ti/drivers/pin/PINCC26XX.h>
+#include <ti/sysbios/family/arm/m3/Hwi.h>
+#include <ti/sysbios/knl/Swi.h>
+#include <xdc/runtime/Error.h>
+#include <ti/sysbios/knl/Semaphore.h>
+
+
+//#include <ti/sysbios/family/arm/m3/knl/Swi.h>
+
+
+//#include <ti/drivers/spi/SPICC26XXDMA.h>
+
+
+/*********************************************************************
+ * MACROS
+ */
+
+// Convert BPM to RR-Interval for data simulation purposes.
+#define HEARTRATE_BPM2RR(bpm)            ((uint16) 60 * 1024 / (uint16) (bpm))
+
+/*********************************************************************
+ * CONSTANTS
+ */
+
+// Fast advertising interval in 625us units.
+#define DEFAULT_FAST_ADV_INTERVAL                       32
+
+// Duration of fast advertising duration in ms.
+#define DEFAULT_FAST_ADV_DURATION                       30000
+
+// Slow advertising interval in 625us units.
+#define DEFAULT_SLOW_ADV_INTERVAL                       1600
+
+// Slow advertising duration in ms (set to 0 for continuous advertising).
+#define DEFAULT_SLOW_ADV_DURATION                       0
+
+// How often to perform heart rate periodic event.
+#define DEFAULT_HEARTRATE_PERIOD                        1//1000//2000
+
+// Whether to enable automatic parameter update request when a connection is
+// formed.
+#define DEFAULT_ENABLE_UPDATE_REQUEST                   GAPROLE_LINK_PARAM_UPDATE_WAIT_BOTH_PARAMS
+
+// Minimum connection interval (units of 1.25ms) if automatic parameter update
+// request is enabled.
+#define DEFAULT_DESIRED_MIN_CONN_INTERVAL               200
+
+// Maximum connection interval (units of 1.25ms) if automatic parameter update
+// request is enabled.
+#define DEFAULT_DESIRED_MAX_CONN_INTERVAL               1600
+
+// Slave latency to use if automatic parameter update request is enabled.
+#define DEFAULT_DESIRED_SLAVE_LATENCY                   1
+
+// Supervision timeout value (units of 10ms) if automatic parameter update
+// request is enabled.
+#define DEFAULT_DESIRED_CONN_TIMEOUT                    1000
+
+// Battery level is critical when it is less than this %
+#define DEFAULT_BATT_CRITICAL_LEVEL                     6
+
+// Battery measurement period in ms
+#define DEFAULT_BATT_PERIOD                             15000
+
+// Arbitrary values used to simulate measurements.
+#define HEARTRATE_BPM_DEFAULT                           73
+#define HEARTRATE_BPM_MAX                               80
+#define HEARTRATE_ENERGY_INCREMENT                      10
+#define HEARTRATE_FLAGS_IDX_MAX                         7
+
+#define HEARTRATE_MEAS_LEN                             70// 9
+
+// Task configuration
+#define HEARTRATE_TASK_PRIORITY                         1
+#define HEARTRATE_TASK_STACK_SIZE                       644
+
+#define AFE_TASK_STACK_SIZE                             644
+#define AFE_TASK_PRIORITY                               2
+
+
+#define HEARTRATE_STATE_CHANGE_EVT                      0x0001
+#define HEARTRATE_KEY_CHANGE_EVT                        0x0002
+#define HEARTRATE_MEAS_EVT                              0x0004
+#define HEARTRATE_BATT_EVT                              0x0008
+#define HEARTRATE_PASSCODE_NEEDED_EVT                   0x0010
+
+// Internal events for RTOS application.
+#define HEARTRATE_ICALL_EVT                             ICALL_MSG_EVENT_ID  // Event_Id_31
+#define HEARTRATE_QUEUE_EVT                             UTIL_QUEUE_EVENT_ID // Event_Id_30
+#define HEARTRATE_MEAS_PERIODIC_EVT                     Event_Id_00
+#define HEARTRATE_BATT_PERIODIC_EVT                     Event_Id_01
+
+#define HEARTRATE_ALL_EVENTS                            (HEARTRATE_ICALL_EVT         | \
+                                                         HEARTRATE_QUEUE_EVT         | \
+                                                         HEARTRATE_MEAS_PERIODIC_EVT | \
+                                                         HEARTRATE_BATT_PERIODIC_EVT)
+
+#define HEARTRATE_MEAS_LEN             70
+
+int  iflag=1;
+
+char fDRYCount;
+
+
+  //------------------------------------------------------------------------------
+  //These bits select one of the eight electrode inputs of channels 1
+  //to 4.
+  //bit D3=PD_WCTA =1 powerd on 0=off
+  //D2,D1,D0
+  //000 = Channel 1 positive input connected to WCTA amplifier
+  //001 = Channel 1 negative input connected to WCTA amplifier
+  //010 = Channel 2 positive input connected to WCTA amplifier
+  //011 = Channel 2 negative input connected to WCTA amplifier
+  //100 = Channel 3 positive input connected to WCTA amplifier
+  //101 = Channel 3 negative input connected to WCTA amplifier
+  //110 = Channel 4 positive input connected to WCTA amplifier
+  //111 = Channel 4 negative input connected to WCTA amplifier
+  ////////////////////////////////////////////////////////////////////////////////
+  //old defination va;ues
+//#define WCTA_POWERED_ON 0x08//0x08   //0x08 is on  0x00 is off
+//#define WCTA_CHANNELNO  0x05//0x04    //0,2,4,6 will select channel 1,2,3,4  for WCT amplifier
+//
+//#define WCTB_POWERED_ON 0x40    //0x40 is ON, 0x00 is OFF
+//#define WCTB_CHANNELNO  0x28    //0x00,0x10,0x20,0x30    select channels 1,2,3,4 to WCTB amplifier
+//
+//#define WCTC_POWERED_ON 0x80    //0x80 is ON, 0x00 is OFF
+//#define WCTC_CHANNELNO  0x05    //0x00,0x02,0x04,0x08    select channels 1,2,3,4 to WCTB amplifier
+
+
+
+#define WCTA_POWERED_ON 0x00//0x08   //0x08 is on  0x00 is off
+#define WCTA_CHANNELNO  0x00//0x04    //0,2,4,6 will select channel 1,2,3,4  for WCT amplifier
+
+#define WCTB_POWERED_ON 0x00    //0x40 is ON, 0x00 is OFF
+#define WCTB_CHANNELNO  0x00    //0x00,0x10,0x20,0x30    select channels 1,2,3,4 to WCTB amplifier
+
+#define WCTC_POWERED_ON 0x00    //0x80 is ON, 0x00 is OFF
+#define WCTC_CHANNELNO  0x00    //0x00,0x02,0x04,0x08    select channels 1,2,3,4 to WCTB amplifier
+
+
+
+  //old defination va;ues
+
+//#define WCTA_POWERED_ON 0x08// channel 2 conected WCT A amplifier           0x08   //0x08 is on  0x00 is off
+//#define WCTA_CHANNELNO  0x02//             0x04    //0,2,4,6 will select channel 1,2,3,4  for WCT amplifier
+//
+//#define WCTB_POWERED_ON 0x40    //0x40 is ON, 0x00 is OFF
+//#define WCTB_CHANNELNO  0x60   // channel 4 conected WCT b amplifier //0x00,0x10,0x40,0x60    select channels 1,2,3,4 to WCTB amplifier
+//
+//#define WCTC_POWERED_ON 0x00    //0x80 is ON, 0x00 is OFF
+//#define WCTC_CHANNELNO  0x00    //0x00,0x02,0x04,0x08    select channels 1,2,3,4 to WCTB amplifier
+
+#define CHANNEL_NO 2//Afe channelnumber changed from 1---8 0 array  contains status byte
+//----------------------------------------------------------------------------
+#define ID_DISPLAY_COUNT 20 //1 to 127 donot exceed the number
+
+#define Num_Packet    4
+#define SPIDMAABORT_T  20//which is 40 milisecond
+//-----------------------------Filters Enabling---------------
+#define FILTER_DC_REQUIRED  1// set this to 1 or 0 depending on DC filter is required or not
+#define FILTER_50_REQUIRED  1// set this to 1 or 0 depending on 50Hz filter is required or not
+#define FILTER_MVA_REQUIRED 1 // set this to 1 or 0 depending on MVA filter is required or not
+#define FILTER_05_REQUIRED  0 // set this to 1 or 0 depending on 05 Hz filter is required or not
+ //-----------------------------Filters Enabling---------------
+
+
+
+//#define enbling  singal internal and external not enabled
+#define INTERNAL_TEST_SIGNAL    0x10    //0x10 is test signal enabled
+#define INTERNAL_TEST_SIGNAL_CH 0x15    //Internal Test Tone gain set 1
+
+#define EXTERNAL_TEST_SIGNAL 0x00     //0x10 is test signal enabled
+
+
+
+#define EXTERNAL_SIG         0x10  //external gain set 1
+#define CH_GAIN              0x10
+
+//#define EXTERNAL_SIG         0x60  //gain set to 12
+
+//#define EXTERNAL_SIG         0x00  //gain set to six
+
+//#define EXTERNAL_SIG         0x30  //gain set to 2
+
+
+#define NOISE_MEASUREMENT    0x11  //CHnSET to  01 for noise Measurement cal
+#define VOLTAGE_MEASUREMENT  0x13  //CHnSET Voltage Voltage Meaurement
+#define TEMP_MEASUREMENT     0x14  //CHnSET Voltage TEMP Meaurement
+#define CH_PDWN              0x80
+
+#define CH2_P_RLD           0x06  // channel 2 positive to RLD Driver
+#define CH2_N_RLD           0x07  // channel 2 positive to RLD Driver
+
+#define RLD_AMP_ENABLED     0x40  //RLD Ampilfier enabled
+
+
+
+#define SIMULATED_DATA_OUTPUT  1  //IF we wanted body signal that is simulated with DC Compnent and 50 hz removed can be used
+
+int iToggle;
+int iSPIDMAAbortCnt;
+
+//char cTempBfr[6][27]; //instaneously frames are loaded
+uint8_t cTempBfr[8][18]; // channel on 1 -8 can be18 bytes to be collected to get Send the data
+int iPacketNumber1Copy;
+
+// Clock instances for internal periodic events.
+static Clock_Struct HRperiodicClock;
+
+
+const int Body_Sim[]=
+{
+1,
+2,
+3,
+4,
+5,
+6,
+7,
+8
+
+};
+int iBodySampleCount=0;
+
+static uint16  ECG_Sample_Count1=0,ECG_Sample_Count2=0,ECG_Sample_Count3=0;
+//-------------------SLP 15 Feb 16
+uint8 delay_count;
+uint8 LED_State=1;
+uint8 Board_SPI=0;
+
+PIN_State pinState;
+PIN_Handle hCpuPins;
+
+PIN_Handle hEtagPins;
+PIN_State  EtagPins;
+
+
+UART_Params UART_Stting;                //slp 9 feb 16
+UART_Handle     Uhandle;                 //slp 9 feb 16
+
+
+//-----------------Hardware interrupt setup
+Hwi_Handle hwiDRDY;
+Hwi_Params hwiParams;
+Error_Block eb;
+
+
+
+//-----------------Software INterrupt Setup
+Swi_Handle hswiDRDY;
+Swi_Handle hSPIover;
+Swi_Params swiParams;
+
+
+
+//--------------------------
+
+
+//uint8_t txBuf[27] = {0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,0x19,0x20,0x21,0x22,0x23,0x24,0x25,0x26,0x27};    // Transmit buffer
+uint8_t txBuf[27];
+uint16_t Sampleindex=0;
+
+uint16 Packet_Count;
+uint16 Sample_data1;
+uint16 Sample_data2;
+uint16 Brpckt_Num;
+uint16 delay1,delay2;
+uint8 index=0;
+uint16 Sim_Data=0;
+uint8_t command_recieved_flag=0;
+uint8_t AFE_Toggle=0;
+uint8_t Frame_Pointer;          //SLP 16 Aug 16
+uint8_t Buff_Change_Flag=0;     //SLP 17 Aug 16
+
+uint8_t cSpiTxBuffer[30];
+uint8_t cSpiRxBuffer1[30];
+uint8_t cSpiRxBuffer2[30];
+uint8_t cExternalbuffer[27];
+SPI_Handle spiHandle;
+uint8 SPI0=0;
+uint8 SPI1=1;
+uint8_t iSPIStatus;
+int iPacketNumber=0;
+int iPacketNumber1[8];
+
+char cIDCountDisplay=0; //displayAfe ad1298 id to ble for 20 times
+unsigned char cAFE_ID=0xff; //default ot 0xff
+float f1,f2;
+
+
+// Entity ID globally used to check for source and/or destination of messages.
+static ICall_EntityID selfEntity;
+
+// HeartRate_semaphore globally used to post events to the application thread.
+//static ICall_Semaphore sem;
+static ICall_SyncHandle syncEvent;
+
+
+// Clock instances for internal periodic events.
+static Clock_Struct HRperiodicClock;
+
+
+
+//-----------
+uint16_t iDataPointer;
+int iInGetData,iInNextScanBuffer;
+//------------
+unsigned char Recive_Packet1[20],Recive_Packet2[20],Packet_Sw_Flag=0;
+void (*Uartreadcb)(UART_Handle Uhandle,void*data, size_t Length);
+void Uartreadcb1(UART_Handle Uhandle,void*data, size_t Length);
+static void OneDataNotification(void);
+static void OneDataNotification1(void);
+static void OneDataNotification3(void);
+static void OneDataNotification4(void);
+void TransferFilteredData1(uint8_t* pOutptr,uint8_t* pInptr);
+void TransferFilteredData(uint8_t* pOutptr,uint8_t* pInptr);
+void TransferChannelData(uint8_t* pOutptr,uint8_t* pInptr);
+int AFEinit3(void);
+// for channel  LA_RA
+float HPF_DC(float fdVal);
+float NF_50(float fdVal);
+float NF_05(float fdVal);
+float MVAF(float *pfStorage,float finData);
+
+// for channel  LL_RA
+float HPF_DC_1(float fdVal);
+float NF_50_1(float fdVal);
+float NF_05_1(float fdVal);
+float MVAF_1(float *pfStorage,float finData);
+
+
+//---------------
+/*********************************************************************
+ * EXTERNAL VARIABLES
+ */
+ SPI_Handle      handle;
+ SPI_Params      params;
+ SPI_Transaction transaction;
+
+/*********************************************************************
+ * GLOBAL VARIABLES
+ */
+
+// Display Interface
+Display_Handle dispHandle = NULL;
+
+/*********************************************************************
+ * EXTERNAL VARIABLES
+ */
+
+/*********************************************************************
+ * TYPEDEFS
+ */
+
+// App event passed from profiles.
+typedef struct
+{
+  appEvtHdr_t hdr;  // Event header
+} heartRateEvt_t;
+
+bool bDataReadinProgress;
+
+char chr0x33;
+extern int iIntCount;
+int  iSpiCount;
+uint8_t *ptrbuf;
+char cSpiTxferCmplete;
+char cBleTxferCmplete;
+ //void DRDY_Callback(PIN_Handle hPin, PIN_Id pinId);
+union {
+    long l1;
+    char c1[4];
+} ldata;
+
+
+
+
+//old til datated on 23/10/2018
+//factors for DC
+#define A0_DC 1
+#define A1_DC 2
+#define A2_DC 1
+//
+#define B1_DC 1.9889
+#define B2_DC 0.9890
+
+//#define A0_DC 0.88025
+//#define A1_DC -1.75949
+//#define A2_DC 0.88025
+//
+//#define B1_DC -1.97380
+//#define B2_DC 0.97570
+
+
+
+
+
+//factors for 50 NF
+#define A0_50   0.9724
+#define A1_50  -1.5741
+#define A2_50   0.9724
+
+//FACTORS
+#define B0_50   1.000 //1.000
+#define B1_50  1.5703
+#define B2_50  -0.9409
+
+
+
+
+//Variables For calculataing  50  and base line notch hz filter  for  LA and RA (RA common)
+float dXn_dc,dXn1_dc,dXn2_dc,dX0_50,dX1_50,dX2_50;
+float dYn_dc,dYn1_dc,dYn2_dc,dYn_50,dY1_50,dY2_50;
+
+//Variables For calculataing  5  notch hz filter
+float dX0_05,dX1_05,dX2_05;
+float dYn_05,dY1_05,dY2_05;
+
+
+
+
+//Variables For calculataing  50  and base line notch hz filter for LL and RA (RA commom)
+float dXn_dc_1,dXn1_dc_1,dXn2_dc_1,dX0_50_1,dX1_50_1,dX2_50_1;
+float dYn_dc_1,dYn1_dc_1,dYn2_dc_1,dYn_50_1,dY1_50_1,dY2_50_1;
+
+//Variables For calculataing  5  notch hz filter
+float dX0_05_1,dX1_05_1,dX2_05_1;
+float dYn_05_1,dY1_05_1,dY2_05_1;
+
+
+
+
+//factors for 05 NF
+#define A0_05  1.1562
+#define A1_05  -2.3087
+#define A2_05  1.1562
+
+#define B0_05  1.000
+#define B1_05   1.9489
+#define B2_05   -0.9526
+//
+
+
+
+//Filter buffer .0.1  used for  storing moving average value
+float fFilterBuffer1[11],fFilterBuffer2[11];
+
+//float fFilterBuffer1[21],fFilterBuffer2[21];
+
+
+
+/*********************************************************************
+ * EXTERNAL FUNCTIONS
+ */
+
+
+
+
+
+
+
+
+
+
+
+
+/*********************************************************************
+ * LOCAL VARIABLES
+ */
+
+// Entity ID globally used to check for source and/or destination of messages.
+static ICall_EntityID selfEntity;
+
+// Event globally used to post local events and pend on system and
+// local events.
+static ICall_SyncHandle syncEvent;
+
+// Clock instances for internal periodic events.
+static Clock_Struct measPerClock;
+
+static Clock_Struct battPerClock;
+
+// Queue object used for app messages
+static Queue_Struct appMsg;
+static Queue_Handle appMsgQueue;
+
+// Task configuration
+Task_Struct HeartRate_task;
+Char HeartRate_taskStack[HEARTRATE_TASK_STACK_SIZE];
+
+
+// Task configuration
+Task_Struct AFEInit_Task;
+Char AFEInit_taskStack[HEARTRATE_TASK_STACK_SIZE];
+
+
+// Profile state parameter.
+static gaprole_States_t gapProfileState = GAPROLE_INIT;
+
+// GAP Profile - Name attribute for SCAN RSP data (max size = 31 bytes).
+static uint8_t scanData[] =
+{
+  // Complete name.
+  0x12,   // length of this data
+  GAP_ADTYPE_LOCAL_NAME_COMPLETE,
+  'H',
+  'e',
+  'a',
+  'r',
+  't',
+  ' ',
+  'R',
+  'a',
+  't',
+  'e',
+  ' ',
+  'S',
+  'e',
+  'n',
+  's',
+  'o',
+  'r'
+};
+
+//GAP - Advertisement data (max size = 31 bytes)
+static uint8_t advertData[] =
+{
+  // Flags
+  0x02,
+  GAP_ADTYPE_FLAGS,
+  GAP_ADTYPE_FLAGS_GENERAL | GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED,
+  // Service UUIDs
+  0x05,
+  GAP_ADTYPE_16BIT_MORE,
+  LO_UINT16(HEARTRATE_SERV_UUID),
+  HI_UINT16(HEARTRATE_SERV_UUID),
+  LO_UINT16(BATT_SERV_UUID),
+  HI_UINT16(BATT_SERV_UUID)
+};
+
+// Device name attribute value.
+static uint8_t attDeviceName[GAP_DEVICE_NAME_LEN] = "Heart Rate Sensor";
+
+// GAP connection handle.
+static uint16_t gapConnHandle;
+
+// Components of heart rate measurement structure.
+static uint8_t heartRateBpm = HEARTRATE_BPM_DEFAULT;
+static uint16_t heartRateEnergyLvl = 0;
+static uint16_t heartRateRrInterval = HEARTRATE_BPM2RR(HEARTRATE_BPM_DEFAULT);
+static uint16_t heartRateRrInterval2 = HEARTRATE_BPM2RR(HEARTRATE_BPM_DEFAULT);
+
+// Advertising user-cancelled state.
+static bool advCancelled = FALSE;
+
+// Index for array below.
+static uint8_t flagsIdx = 0;
+
+unsigned int cDebug;
+
+// Flags for simulated measurements.
+static const uint8_t heartRateflags[HEARTRATE_FLAGS_IDX_MAX] =
+{
+  HEARTRATE_FLAGS_CONTACT_NOT_SUP,
+  HEARTRATE_FLAGS_CONTACT_NOT_DET,
+  HEARTRATE_FLAGS_CONTACT_DET | HEARTRATE_FLAGS_ENERGY_EXP,
+  HEARTRATE_FLAGS_CONTACT_DET | HEARTRATE_FLAGS_RR,
+  HEARTRATE_FLAGS_CONTACT_DET | HEARTRATE_FLAGS_ENERGY_EXP | HEARTRATE_FLAGS_RR,
+  (HEARTRATE_FLAGS_FORMAT_UINT16 | HEARTRATE_FLAGS_CONTACT_DET |
+  HEARTRATE_FLAGS_ENERGY_EXP | HEARTRATE_FLAGS_RR),
+  0x00
+};
+
+/*********************************************************************
+ * LOCAL FUNCTIONS
+ */
+
+// Task functions and message processing.
+static void HeartRate_init(void);
+static void HeartRate_taskFxn(UArg a0, UArg a1);
+static void AFE_taskFxn(UArg a2, UArg a3);
+
+static void HeartRate_processStackMsg(ICall_Hdr *pMsg);
+static void HeartRate_processGattMsg(gattMsgEvent_t *pMsg);
+static void HeartRate_processAppMsg(heartRateEvt_t *pMsg);
+static uint8_t HeartRate_enqueueMsg(uint8_t event, uint8_t state);
+static void HeartRate_clockHandler(UArg arg);
+static void HeartRate_measPerTask(void);
+static void HeartRate_battPerTask(void);
+static void HeartRate_measNotify(void);
+static bool HeartRate_toggleAdvertising(void);
+
+
+// Events and callbacks for profiles and keys.
+static void HeartRate_battCB(uint8_t event);
+static void HeartRate_battEvt(uint8_t event);
+static void HeartRate_serviceCB(uint8_t event);
+static void HeartRate_heartRateEvt(uint8_t event);
+static void HeartRate_keyPressHandler(uint8_t keys);
+static void HeartRate_handleKeys(uint8_t shift, uint8_t keys);
+static void HeartRate_stateChangeCB(gaprole_States_t newState);
+static void HeartRate_stateChangeEvt(gaprole_States_t pEvent);
+
+static void HeartRate_passcodeCB(uint8_t *deviceAddr, uint16_t connHandle,
+                                 uint8_t uiInputs, uint8_t uiOutputs);
+static void HeartRate_processPasscode(void);
+
+
+
+
+void AFE_performPeriodicTask(void);
+int ReadDataFromAFE(void);
+int ReadDataFromAFEasynchronous(void);
+//static void AFEinit_taskFxn(UArg a0, UArg a1);
+
+
+volatile void swiDRDYFunction();
+int AFEinit(void);
+int AFEinit1(void);
+int SendtoAFE2 (uint8 iSendCount,uint8 iRecvCount);
+int AFEinit2(void);
+//int SendtoAFE (SPI_HANDLE uint8 iSendCount,uint8 iRecvCount)
+int cInterruptNumber;
+unsigned char cInterprocessSem=0;
+//extern hciStatus_t HCI_EXT_HaltDuringRfCmd( uint8 mode );
+
+
+
+
+
+
+/*********************************************************************
+ * PROFILE CALLBACKS
+ */
+
+// GAP Role Callbacks.
+static gapRolesCBs_t heartRatePeripheralCB =
+{
+  HeartRate_stateChangeCB  // Profile State Change Callbacks.
+};
+
+// Bond Manager Callbacks.
+static const gapBondCBs_t heartRateBondCB =
+{
+  (pfnPasscodeCB_t) HeartRate_passcodeCB,    // Passcode callback
+  NULL                     // Pairing state callback.
+};
+
+
+
+
+
+/*********************************************************************
+ * PUBLIC FUNCTIONS
+ */
+
+
+///*********************************************************************
+// * @fn      AFE_CreateTask
+// *
+// * @brief   Task creation function for the Heart Rate.
+// *
+// * @param   none
+// *
+// * @return  none
+// */
+void AFE_createTask(void)
+{
+  Task_Params taskAFEParams;
+ // Configure task
+  Task_Params_init(&taskAFEParams);
+  taskAFEParams.stack =AFEInit_taskStack; //HeartRate_taskStack;
+  taskAFEParams.priority = AFE_TASK_PRIORITY;
+  taskAFEParams.stackSize = AFE_TASK_STACK_SIZE;
+
+  Task_construct(&AFEInit_Task,AFE_taskFxn, &taskAFEParams, NULL);
+}
+
+
+
+
+
+
+/*********************************************************************
+ * @fn      HeartRate_createTask
+ *
+ * @brief   Task creation function for the Heart Rate.
+ *
+ * @param   none
+ *
+ * @return  none
+ */
+void HeartRate_createTask(void)
+{
+
+  Task_Params taskParams;
+  // Configure task
+  Task_Params_init(&taskParams);
+  taskParams.stack = HeartRate_taskStack;
+  taskParams.stackSize = HEARTRATE_TASK_STACK_SIZE;
+  taskParams.priority = HEARTRATE_TASK_PRIORITY;
+  Task_construct(&HeartRate_task, HeartRate_taskFxn, &taskParams, NULL);
+
+}
+
+//
+//
+
+/*****************AFE HANDLING ROUTINES *******************/
+
+// Clock instances for 1ms internal periodic events. for handling AFE data
+Clock_Struct AFEperiodicClock;
+
+strScanBuffer ScanBuffer;
+
+
+/**--------------------------------------------------------------
+void AFEChipSelect(void)
+Selcts teh Active Low Chip select Pin of teh AFE
+input: none
+returns:nothing
+----------------------------------------------------------------*/
+void AFEChipSelect(void)
+{
+    PIN_setOutputValue(hCpuPins,AFE_CS,0);
+    PIN_setOutputValue(hCpuPins,AFE_CS_EVALBOARD,0);
+
+}
+
+/**----------------------------------------------------------------
+void AFEChipSelect(void)
+DeSelcts teh Active Low Chip select Pin of the AFE
+input: none
+returns:nothing
+----------------------------------------------------------------*/
+void AFEChipUnSelect(void)
+{
+    PIN_setOutputValue(hCpuPins,AFE_CS,1);
+    PIN_setOutputValue(hCpuPins,AFE_CS_EVALBOARD,1);
+}
+
+/**----------------------------------------------------------------
+void ConnectPowertoAFE(void)
+Enables 3.3V output by controlling BOard 3.3V enable pin on CPUGenerates
+When this ppin is made 0, 3.3V is enabled
+input: none
+returns:nothing
+----------------------------------------------------------------*/
+void ConnectPowertoAFE(void)
+{
+        //keep digital bits low on power on
+    PIN_setOutputValue(hCpuPins,Board_SPI0_MOSI,0);
+    PIN_setOutputValue(hCpuPins,Board_SPI0_CLK,0);
+    PIN_setOutputValue(hCpuPins,Board_SPI0_CSN,0);
+
+    PIN_setOutputValue(hCpuPins,Board_3V3_EN,1);        //3.3 V is to kept enabled for AFE to work
+}
+/**---------------------------------------------------------------
+void Delayus(int iDelay)
+Routine to give so many us delay
+input: int iDelay -- numner of uS
+returns:nothing
+----------------------------------------------------------------!*/
+void DelayuS(int iDelay)
+{
+ uint32_t i,j,k;
+for (i=0,j=0,k=0;i<=iDelay;i++){
+    j=i*8;
+    k=k+j;
+}
+}
+//-------------------------------------------------------------------
+//static void KeepPinsReady(void)
+//--------------------------------------------------------------------
+void KeepPinsReady(void)
+{
+    hCpuPins= PIN_open(&pinState, &BoardGpioInitTable[0]);
+}
+
+
+/**----------------------------------------------------------------
+void ResetAFE(void)
+Generates Hadr=ware Reset signal for AFE
+input: none
+returns:nothing
+----------------------------------------------------------------*/
+void HardwareResetAFE(void)
+{
+//    KeepPinsReady();
+//    ConnectPowertoAFE();
+//
+//    PIN_setOutputValue(hCpuPins,AFE_RESET,0);
+//    DelayuS(100);
+//    PIN_setOutputValue(hCpuPins,AFE_RESET,1);
+//    DelayuS(100);
+
+        KeepPinsReady();
+        ConnectPowertoAFE();
+        PIN_setOutputValue(hCpuPins,AFE_RESET,0);
+
+        DelayuS(100000);
+        PIN_setOutputValue(hCpuPins,AFE_RESET,1);
+        DelayuS(100000);
+
+
+}
+/**-------------------------------------------------------------
+void AFEstart(void)
+High-low-High pulse on Start line starts the ADC
+input: none
+returns:nothing
+----------------------------------------------------------------*/
+void AFEstart(void)
+{
+
+    PIN_setOutputValue(hCpuPins,AFE_START,0);       // AFE start is doen by sending command
+                                                    // For command to be accepted, this line is to be kept low
+    DelayuS(1);
+    //PIN_setOutputValue(hCpuPins,AFE_START,1);
+    //DelayuS(100);
+    cSpiTxBuffer[0] = AFE_OPCODE_START;
+    SendtoAFE (handle,1,0);                                 //restart continuous read
+
+}
+
+/**----------------------------------------------------------------------
+ * void SendtoAFE2 (uint8 iCount, uint8* ptr)
+ * Rountien send number of bytes to AFE
+ * input: iCount: no of bytes to be sent
+ *  returns: AFE_TRANSFER_ERR(-1) if transfer counld not take palce
+ *          else, no. of bytes that have bene received as reply
+ *          (0 or more- depends on iRecv COunt specified)
+ ----------------------------------------------------------------------*/
+int SendtoAFE2 (uint8 iSendCount,uint8 iRecvCount)
+{
+    int i;
+    bool b1;
+
+    uint8_t cTempTx[100],cTempRx[100];
+
+
+    for (i=0;i<iSendCount+iRecvCount;i++){
+        cTempTx[i]=0x00;
+        cTempRx[i]=0xFF;
+    }
+    for (i=0;i<iSendCount;i++){
+        cTempTx[i]=cSpiTxBuffer[i];
+    }
+
+    transaction.count = iSendCount+iRecvCount;
+    transaction.txBuf = cTempTx;
+    transaction.rxBuf = cTempRx;
+
+    b1=SPI_transfer(handle, &transaction);
+    if (!b1) {
+        return AFE_TRANSFER_ERR;                       // returns error condition
+    }
+
+    for (i=0;i<iRecvCount;i++){
+        cSpiRxBuffer1[i]=cTempRx[i+iSendCount]; // ignore the response of MISO for sent bytes and consider only received bytes
+    }
+    cSpiRxBuffer1[i]=cTempRx[i];
+    cAFE_ID=cSpiRxBuffer1[0];
+    cAFE_ID=cSpiRxBuffer1[0]; //for breakpoint
+
+    //---------------
+    return iRecvCount;                          // no. of bytes that has been received
+}
+
+/**----------------------------------------------------------------------
+ * void SendtoAFE (uint8 iCount, uint8* ptr)
+ * Rountien send number of bytes to AFE
+ * input: iCount: no of bytes to be sent
+ *  returns: AFE_TRANSFER_ERR(-1) if transfer counld not take palce
+ *          else, no. of bytes that have bene received as reply
+ *          (0 or more- depends on iRecv COunt specified)
+ ----------------------------------------------------------------------*/
+int SendtoAFE (SPI_Handle handle1, uint8 iSendCount,uint8 iRecvCount)
+{
+int i;
+bool b1;
+
+    uint8_t cTempTx[100],cTempRx[100];
+    for (i=0;i<iSendCount+iRecvCount;i++){
+        cTempTx[i]=0x00;
+        cTempRx[i]=0xFF;
+    }
+    for (i=0;i<iSendCount;i++){
+        cTempTx[i]=cSpiTxBuffer[i];
+    }
+
+    transaction.count = iSendCount+iRecvCount;
+    transaction.txBuf = cTempTx;
+    transaction.rxBuf = cTempRx;
+
+    b1=SPI_transfer(handle, &transaction);
+    if (!b1) return AFE_TRANSFER_ERR;                       // returns error condition
+
+    for (i=0;i<iRecvCount;i++){
+        cSpiRxBuffer1[i]=cTempRx[i+iSendCount]; // ignore the response of MISO for sent bytes and consider only received bytes
+    }
+    cSpiRxBuffer1[i]=cTempRx[i];
+    //---------------
+    return iRecvCount;                          // no. of bytes that has been received
+}
+
+
+/**----------------------------------------------------------------
+void ResetScanBuffer(void)
+Used to initialise scan buffer
+input: none
+returns: nothing
+ -----------------------------------------------------------------*/
+void ResetScanBuffer(void)
+{
+    ScanBuffer.iIptr=0;         // both in and out pointers are pointing to beginning of scan buffer
+    ScanBuffer.iOptr=0;
+    ScanBuffer.iOverrunFlag=0;
+    ScanBuffer.iCount=0;
+}
+
+
+/**-----------------------------reset the afe-------------------------------*/
+void ResetAFE(void)
+{
+
+    PIN_setOutputValue(hCpuPins,AFE_PRDWN,1);
+    PIN_setOutputValue(hCpuPins,AFE_RESET,1);
+    DelayuS(100);
+    PIN_setOutputValue(hCpuPins,AFE_RESET,0);
+    DelayuS(1000);
+    PIN_setOutputValue(hCpuPins,AFE_RESET,1);
+    DelayuS(100);
+
+}
+
+/**---------------------------------------------------------------
+uint8_t* NextScanBuffer(void)
+points to 27 byte buffer in scan buffer into which data has to e put next
+Uses ScanBuffer.iIptr as index
+Increments the iIPtr index until it reaches  iOptr
+input: none
+returns:return 1 if buffer is found. return 0 if buffer is not found. the buffer address is retunred in global variable ptr buf
+ ----------------------------------------------------------------*/
+uint8_t NextScanBuffer(void)
+{
+uint8_t* ptr;
+int i,j,k;
+    k=0;
+    ptr=0;
+    //if (iInGetData==1) return 0;
+    iInNextScanBuffer=1;
+    i=ScanBuffer.iIptr;
+    ptr=&(ScanBuffer.ScanData[i].cOneScanData[0]);
+
+    j=ScanBuffer.iCount;
+    if (j>SCAN_BUF_SIZE) {
+        k=1;
+        iInNextScanBuffer=0;
+        ScanBuffer.iOverrunFlag=1;
+        return 0;
+    }
+
+    if (j<0) {
+        ResetScanBuffer();
+        i=ScanBuffer.iIptr;
+        ptr=&(ScanBuffer.ScanData[i].cOneScanData[0]);
+        ptrbuf=ptr;
+        ScanBuffer.iOverrunFlag=2;
+        iInNextScanBuffer=0;
+        return 1;
+    }
+
+
+
+    j++;
+    ScanBuffer.iOverrunFlag=0;
+
+    iInNextScanBuffer=0;
+    ptrbuf=ptr;
+
+    return 1;
+
+}
+
+
+
+/**-----------------------------------------------------------------------------------
+void DRDYCallbackFxn(PIN_Handle handle, PIN_Id pinId) {
+Call back function gets control every time DRDY interrupt is generated *
+ -------------------------------------------------------------------------------------*/
+
+//void DRDYCallbackFxn(PIN_Handle handle, PIN_Id pinId)
+//{
+//
+//    //Generates a SWI
+//  //SWI reads SPI and generates a data ready event for main task to take data out
+//  Swi_post(hswiDRDY);
+////      events |= ECG_DATA_READY_EVENT;
+////      Semaphore_post(sem);
+//
+//}
+
+/**---------------------------------------------------------
+ * ---------------------------------------------------------*/
+
+//int RegisterDRDYCallback(PIN_Handle hKeyPins)
+//{
+//  if (PIN_registerIntCb(hKeyPins, &DRDYCallbackFxn) != PIN_SUCCESS) {
+//    iIntCount=100;
+//      return AFE_INIT_ERROR;
+//  } else {
+//
+//    PIN_setConfig(hKeyPins, PIN_BM_IRQ, AFE_DRDY   | PIN_IRQ_NEGEDGE);
+//    iIntCount=200;
+//    return AFE_INIT_SUCCESS;
+//  }
+//}
+
+/**-----------------------------------------------------------------------------------
+void swiDRDYFunction()
+Call back fucntion gets control every time DRDY interrupt is generated,
+HWI interrupt servcie routine is executed, which posts the SWI *
+ -------------------------------------------------------------------------------------*/
+volatile void swiDRDYFunction()
+{
+    int i;
+    iSpiCount++;
+    bDataReadinProgress=1;
+    ReadDataFromAFEasynchronous();
+    //Semaphore_post(sem);
+}
+
+
+/**----------------------------------------------------------------
+static void DRDY_Callback(PIN_Handle hPin, PIN_Id pinId)
+Call back function - gets control on DRDY interrupt
+input: none
+returns:nothing
+----------------------------------------------------------------*/
+volatile void DRDY_Callback(PIN_Handle hPin, PIN_Id pinId)
+{
+  extern Swi_Handle hswiDRDY;
+  iSPIDMAAbortCnt=SPIDMAABORT_T;
+  Swi_post(hswiDRDY);
+}
+
+
+/**-----------------------------------------------------------------------------------
+void void swiSPITransferFunction()()
+Call back function gets control every time DRDY interrupt is generated,
+HWI interrupt servcie routine is executed, which posts the SWI which initiates SPI_transfer,
+which generates a call back which generates SWI *
+ -------------------------------------------------------------------------------------*/
+void swiSPITransferFunction()
+{
+
+    //Generates a SWI
+    //SWI reads SPI and generates a data ready event for main task to take data out
+    //Swi_Post(hswiDRDY);
+}
+
+/**----------------------------------------------------------------
+Void spiCallback (SPI_Handle handle, SPI_Transaction *transaction)
+
+------------------------------------------------------------------*/
+void SPICallbackFunction (SPI_Handle handle, SPI_Transaction *pTransaction)
+{
+    void *ptr;
+    int i,j;
+
+//    if (moreDataToSend) {
+//        transaction->txBuf = nextBuffer;
+//        SPI_transfer(handle, transaction);
+//    }
+   // PIN_setInterrupt(hCpuPins, AFE_DRDY|PIN_IRQ_DIS); // disable drdyinterrupt
+    if (transaction.status==SPI_TRANSFER_COMPLETED){
+        cSpiTxferCmplete=1 ;// indicate that process buffer increment is in processs
+        chr0x33= (iSpiCount & 0xff);
+        j=ScanBuffer.iCount;
+        if (j<SCAN_BUF_SIZE) {
+            i=ScanBuffer.iIptr; //move in pointer forward
+            i++;
+            if (i>=SCAN_BUF_SIZE) i=0;
+             ScanBuffer.iIptr=i;
+             ScanBuffer.iCount++;
+        }
+        cSpiTxferCmplete=0; //// indicates that process buffer increment is compeleted
+        //Semaphore_post(syncEvent);
+        Event_post(syncEvent, 1);
+    } else {
+        chr0x33=0x44;
+    }
+}
+/**----------------------------------------------------------------
+void AFE_taskFxn()
+Initialises AFE
+input: none
+returns:AFE_INIT_ERROR(0) if Init not succesful, AFE_INIT_SUCCESS(1) if succesful
+----------------------------------------------------------------*/
+static void AFE_taskFxn(UArg a2, UArg a3)
+{
+
+    AFEinit1();
+    AFEinit2();
+    for(;;);
+
+
+
+}
+
+/**----------------------------------------------------------------
+void AFEinit2(void)
+Initialises AFE
+input: none
+returns:AFE_INIT_ERROR(0) if Init not succesful, AFE_INIT_SUCCESS(1) if succesful
+----------------------------------------------------------------*/
+int AFEinit2(void)
+{
+int i;
+
+
+////---------------------------------------------------------
+////
+//Error_init(&eb);
+//Swi_Params_init(&swiParams);
+////
+////
+//hswiDRDY = Swi_create((ti_sysbios_knl_Swi_FuncPtr)swiDRDYFunction, &swiParams,&eb);     // this sofwtare interrupt will be generated by DRDY HWI
+////
+//hswiDRDY = Swi_create(swiDRDYFunction, &swiParams,&eb);
+//if (hswiDRDY == NULL) {
+//    return AFE_INIT_ERROR;                          // eror occured while creating SWI
+//}
+////
+//Swi_Params_init(&swiParams);
+//hSPIover = Swi_create((ti_sysbios_knl_Swi_FuncPtr)swiSPITransferFunction, &swiParams, &eb);       // this sofwtare interrupt will be generated once SPI Transfer for data read from AFE is over
+//if (hSPIover == NULL) {
+//  return AFE_INIT_ERROR;                          // eror occured while creating SWI
+//}
+//
+//PIN_registerIntCb(hCpuPins, DRDY_Callback);
+//PIN_setConfig(hCpuPins, PIN_BM_IRQ, AFE_DRDY   | PIN_IRQ_NEGEDGE);
+//PIN_setInterrupt(hCpuPins, AFE_DRDY|PIN_IRQ_NEGEDGE);
+
+
+Error_init(&eb);
+Swi_Params_init(&swiParams);
+hswiDRDY = Swi_create((ti_sysbios_knl_Swi_FuncPtr)swiDRDYFunction, &swiParams,&eb);     // this sofwtare interrupt will be generated by DRDY HWI
+if (hswiDRDY == NULL) {
+    return AFE_INIT_ERROR;                          // eror occured while creating SWI
+}
+
+//SBP_configTable
+//hCpuPins = PIN_open(&sbpPins, SBP_configTable);
+PIN_registerIntCb(hCpuPins, DRDY_Callback);
+PIN_setConfig(hCpuPins, PIN_BM_IRQ, AFE_DRDY   | PIN_IRQ_NEGEDGE);
+PIN_setInterrupt(hCpuPins, AFE_DRDY|PIN_IRQ_NEGEDGE);
+
+
+
+AFEstart();
+DelayuS(10);
+
+cSpiTxBuffer[0] = AFE_OPCODE_RDATAC;
+SendtoAFE (handle,1,0);                                 //restart continuous read
+
+AFEChipUnSelect();
+DelayuS(10);
+AFEChipSelect();
+
+SPI_close(handle);
+
+SPI_Params_init(&params);
+params.bitRate  =4000000;  //4mhz
+
+params.transferTimeout=100;
+params.transferMode=SPI_MODE_CALLBACK;//SPI_MODE_BLOCKING
+params.transferCallbackFxn=SPICallbackFunction;
+params.frameFormat = SPI_POL0_PHA1;             // this is Motorola format
+params.mode        = SPI_MASTER;
+handle = SPI_open(SPI0, &params);               // initialise SPI
+
+DelayuS(10);
+cInterprocessSem=0;
+
+//return 100;
+return AFE_INIT_SUCCESS;
+
+// temperary not used
+}
+
+
+
+
+/**----------------------------------------------------------------
+void AFEinit(void)
+Initialises AFE
+input: none
+returns:AFE_INIT_ERROR(0) if Init not succesful, AFE_INIT_SUCCESS(1) if succesful
+----------------------------------------------------------------*/
+int AFEinit1(void)
+{
+int i,j;
+
+SPI_init();
+
+//-------SPI initalisation-----------
+SPI_Params_init(&params);                       // initialises parameters to defaults
+params.bitRate  = 500000;
+params.transferTimeout=1000;
+params.transferMode=SPI_MODE_BLOCKING;              //SPI_MODE_CALLBACK;
+//params.transferCallbackFxn=SPICallbackFunction;
+params.frameFormat = SPI_POL0_PHA1;             // this is Motorola format
+params.mode        = SPI_MASTER;
+handle = SPI_open(0, &params);              // initialise SPI
+
+spiHandle=handle;
+bDataReadinProgress=0;
+
+
+if (!spiHandle) {
+    iSPIStatus=0;
+    return AFE_INIT_ERROR;
+} else {
+    iSPIStatus=1;                                       // MARK SPI open is succesful
+}
+
+DelayuS(100000);
+////
+HardwareResetAFE();
+ResetAFE();
+DelayuS(1000);
+AFEChipSelect();
+DelayuS(10000);
+////debug
+//for(;;){
+//for(;;){
+    cSpiTxBuffer[0] = AFE_OPCODE_STOP;
+    cSpiTxBuffer[1] = AFE_OPCODE_SDATAC;
+    cSpiTxBuffer[2] = AFE_OPCODE_RREG | AFE_ID;
+    cSpiTxBuffer[3] = 0;                             // we need to read one ID register
+    cSpiTxBuffer[4] = 0xFF;
+    i=SendtoAFE2 (4,1);                             //Read ID byte. It should be 0x92
+    if (i==AFE_TRANSFER_ERR){
+        return AFE_INIT_ERROR;
+    }
+    if (cSpiRxBuffer1[0]!=AFE_DEFINED_ID){
+        return AFE_INIT_ERROR;
+    }
+
+
+
+    cSpiTxBuffer[0] = AFE_OPCODE_SDATAC;
+    i=SendtoAFE2(1,0);
+
+    cSpiTxBuffer[0] = AFE_OPCODE_RESET;
+    i=SendtoAFE2(1,0);
+    DelayuS(10); //internal voltage startup time
+
+    i=0;
+    cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CONFIG3;
+    cSpiTxBuffer[i++] = 0x00;
+    cSpiTxBuffer[i++] =0xC6;   //fed externallyAVSS+AVDD/2 externally; 0x04  RLD AmplifierEnabled
+    i=SendtoAFE2 (i,40);                             //Read ID byte. It should be 0x92
+    DelayuS(15000); //internal voltage startup time=150ms
+
+    cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+    cSpiTxBuffer[1] = 19;
+    cSpiTxBuffer[2] = 0x00;
+    i=SendtoAFE2 (2,40);
+
+    i=0;
+    cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CONFIG1;
+    cSpiTxBuffer[i++] = 0x00;
+    cSpiTxBuffer[i++] = 0x86;
+    //cSpiTxBuffer[i++] = 0x85;
+                                        //D2:0 data output rate
+                                            //06=250 SPS,04=1KSPS,03=2kSPS
+                                            // D8=0 LP mode, 1 HR mode
+    i=SendtoAFE2 (i,40);
+
+    i=0;
+    cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+    cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+    cSpiTxBuffer[2] = 0xFF;
+    i=SendtoAFE2 (2,40);
+    i=0;
+
+    cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CONFIG2;
+    cSpiTxBuffer[i++] = 0x00;
+    //cSpiTxBuffer[i++] =0x00;                  //NO_INTERNAL_TEST_SIGNAL;
+    cSpiTxBuffer[i++] =0x10;                    //INTERNAL_TEST_SIGNAL ON;                       //D4=INT_TEST=1 generates internal etst signal, =0 no test signal
+                                            //D1:0=00 or 01 decides freq of test signal
+                                            // D2=amplitude 0 lower, 1 higher amplitude
+
+    i=SendtoAFE2 (i,40);
+
+    i=0;
+    cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+    cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+    cSpiTxBuffer[2] = 0xFF;
+    i=SendtoAFE2 (2,40);
+    i=0;
+
+
+
+
+
+
+    //return AFE_INIT_SUCCESS;
+
+
+
+//}
+//}
+//debug
+
+////debug En
+//for(;;){
+//    cSpiTxBuffer[0] = AFE_OPCODE_STOP;
+//    cSpiTxBuffer[1] = AFE_OPCODE_SDATAC;
+//    cSpiTxBuffer[2] = AFE_OPCODE_RREG | AFE_ID;
+//    cSpiTxBuffer[3] = 0;                             // we need to read one ID register
+//    cSpiTxBuffer[4] = 0xFF;
+//    i=SendtoAFE2 (4,1);                             //Read ID byte. It should be 0x92
+//    if (i==AFE_TRANSFER_ERR){
+//        //return AFE_INIT_ERROR;
+//    }
+//    if (cSpiRxBuffer1[0]!=AFE_DEFINED_ID){
+//        //return AFE_INIT_ERROR;
+//    }
+//}
+DelayuS(10);
+
+//-------------------------------------------------------------------------------------------------------------------------
+
+//--------------------configuration1 AS PER THE DATASHEET ------------------------
+
+
+cSpiTxBuffer[0] = AFE_OPCODE_SDATAC;
+i=SendtoAFE2(1,0);
+
+cSpiTxBuffer[0] = AFE_OPCODE_RESET;
+i=SendtoAFE2(1,0);
+DelayuS(10); //internal voltage startup time
+
+i=0;
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CONFIG3;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] =0xCC;   //fed externallyAVSS+AVDD/2 externally; 0x04  RLD AmplifierEnabled
+i=SendtoAFE2 (i,40);                             //Read ID byte. It should be 0x92
+DelayuS(15000); //internal voltage startup time=150ms
+
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;
+cSpiTxBuffer[2] = 0x00;
+i=SendtoAFE2 (2,40);
+
+i=0;
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CONFIG1;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = 0x86;
+//cSpiTxBuffer[i++] = 0x85;
+                                    //D2:0 data output rate
+                                        //06=250 SPS,04=1KSPS,03=2kSPS
+                                        // D8=0 LP mode, 1 HR mode
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CONFIG2;
+cSpiTxBuffer[i++] = 0x00;
+//cSpiTxBuffer[i++] =0x00;                  //NO_INTERNAL_TEST_SIGNAL;
+cSpiTxBuffer[i++] =0x10;                    //INTERNAL_TEST_SIGNAL ON;                       //D4=INT_TEST=1 generates internal etst signal, =0 no test signal
+                                        //D1:0=00 or 01 decides freq of test signal
+                                        // D2=amplitude 0 lower, 1 higher amplitude
+
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_LOFF;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = 0xF3;
+                                        //RLDREF signalis internal
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CH1SET;           //   D6:4 PGA gain .
+                                                            //      000=gain 6
+                                                            //      001=gain 1
+                                                            //      010=gain 2
+                                                            //      011=gain 3
+                                                            //      100=gain 4
+                                                            //      101=gain 8
+                                                            //      110=gain 12
+
+                                                            // D2:0 =00 external signal
+                                                            //      =001input shorted
+                                                            //      =101 test signal
+
+cSpiTxBuffer[i++] = 0x00;
+//cSpiTxBuffer[i++] = 0x20;  // 0x10;  //external signal channel
+cSpiTxBuffer[i++] =NOISE_MEASUREMENT|CH_PDWN;////VOLTAGE_MEASUREMENT; //NOISE_MEASUREMENT;  // internal signal
+i=SendtoAFE2 (i,20);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CH2SET;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = 0x10;//NOISE_MEASUREMENT|CH_PDWN;//NOISE_MEASUREMENT|CH_PDWN;//CH_GAIN|CH2_P_RLD; //Channel 2 RLD Enabled // EXTERNAL_SIG
+                        /////NOISE_MEASUREMENT|CH_PDWN;////;//INTERNAL_TEST_SIGNAL_CH; //NOISE_MEASUREMENT|CH_PDWN;//VOLTAGE_MEASUREMENT;//NOISE_MEASUREMENT;
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CH3SET;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = 0x10;//NOISE_MEASUREMENT|CH_PDWN;
+;//NOISE_MEASUREMENT|CH_PDWN;;//NOISE_MEASUREMENT;    //Noise measurement
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CH4SET;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = NOISE_MEASUREMENT|CH_PDWN;;//NOISE_MEASUREMENT; //noise  masurement
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CH5SET;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] =NOISE_MEASUREMENT|CH_PDWN;;//|CH_PDWN;//NOISE_MEASUREMENT;//internal test signal CH_GAIN|CH2_P_RLD
+
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CH6SET;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = NOISE_MEASUREMENT|CH_PDWN;//VOLTAGE_MEASUREMENT; EXTERNAL_SIG//NOISE_MEASUREMENT;//internal test signal
+                                                // D6:4 = GAIN..
+                                                // 000=6,001=1,010=2,011=3,100=4,101=8,110=12
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CH7SET;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] =NOISE_MEASUREMENT|CH_PDWN;//NOISE_MEASUREMENT|CH_PDWN;//INTERNAL_TEST_SIGNAL_CH; //EXTERNAL_SIG;//NOISE_MEASUREMENT;//internal test signal                                   //   gain is 3 and test signal is given as input for mux
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CH8SET;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = NOISE_MEASUREMENT|CH_PDWN;//INTERNAL_TEST_SIGNAL_CH;;//EXTERNAL_SIG; //internal test signal                                  //   gain is 3 and test signal is given as input for mux
+i=SendtoAFE2 (i,40);
+
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+//////////////////////////////////////////////RLD SENSE/////////////////////////////////////////////////////////////
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_RLD_SENSP;//sense 7
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = 0x00;//NOISE_MEASUREMENT|CH_PDWN;//INTERNAL_TEST_SIGNAL_CH; //EXTERNAL_SIG;//NOISE_MEASUREMENT;//internal test signal                                   //   gain is 3 and test signal is given as input for mux
+i=SendtoAFE2 (i,40);
+//
+//
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_RLD_SENSN; //sense 7
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = 0x00;//NOISE_MEASUREMENT|CH_PDWN;//INTERNAL_TEST_SIGNAL_CH; //EXTERNAL_SIG;//NOISE_MEASUREMENT;//internal test signal                                   //   gain is 3 and test signal is given as input for mux
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+i=0;
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG |AFE_WCT1;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = WCTA_POWERED_ON | WCTA_CHANNELNO;  //chanell 3   set to wct powerd                       //
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+
+i=0;
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG |AFE_WCT2;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = WCTB_POWERED_ON | WCTB_CHANNELNO;  //chanell 3   set to wct powerd                       //
+i=SendtoAFE2 (i,40);
+
+
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+//i=0;
+
+//cSpiTxBuffer[i] = 0xFF;
+//i=SendtoAFE2 (i,0);                               //Read ID byte. It should be 0x92
+if (i==AFE_TRANSFER_ERR){
+    return AFE_INIT_ERROR;
+}
+ResetScanBuffer();
+
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+
+
+cSpiTxBuffer[0] = AFE_OPCODE_STOP;
+i=SendtoAFE2 (1,0);
+
+cSpiTxBuffer[0] = AFE_OPCODE_SDATAC;
+i=SendtoAFE2 (1,0);
+DelayuS(10000);
+DelayuS(10000);
+DelayuS(10000);
+DelayuS(10000);
+DelayuS(10000);
+DelayuS(10000);
+ResetScanBuffer();
+cSpiTxferCmplete=0;
+
+DelayuS(10);
+DelayuS(10);
+DelayuS(10);
+
+
+//---------------------------------------------------------
+//Set up AFE DRDY signal to generate interrupt
+//    Board_BUTTON0  | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_NEGEDGE, - This generates interrupt on falling edge
+// DRDY signl is active low
+Error_init(&eb);
+Swi_Params_init(&swiParams);
+
+
+hswiDRDY = Swi_create((ti_sysbios_knl_Swi_FuncPtr)swiDRDYFunction, &swiParams,&eb);     // this sofwtare interrupt will be generated by DRDY HWI
+
+if (hswiDRDY == NULL) {
+    return AFE_INIT_ERROR;                          // eror occured while creating SWI
+}
+PIN_registerIntCb(hCpuPins, DRDY_Callback);
+PIN_setConfig(hCpuPins, PIN_BM_IRQ, AFE_DRDY   | PIN_IRQ_NEGEDGE);
+PIN_setInterrupt(hCpuPins, AFE_DRDY|PIN_IRQ_NEGEDGE);
+
+
+
+//---------------------------------------------------------
+
+AFEstart();
+DelayuS(10);
+
+cSpiTxBuffer[0] = AFE_OPCODE_RDATAC;
+SendtoAFE (handle,1,0);                                 //restart continuous read
+
+AFEChipUnSelect();
+DelayuS(10);
+AFEChipSelect();
+
+SPI_close(handle);
+
+SPI_Params_init(&params);
+params.bitRate  =4000000;  //4mhz
+
+params.transferTimeout=1000;
+params.transferMode=SPI_MODE_CALLBACK;//SPI_MODE_BLOCKING
+params.transferCallbackFxn=SPICallbackFunction;
+params.frameFormat = SPI_POL0_PHA1;             // this is Motorola format
+params.mode        = SPI_MASTER;
+handle = SPI_open(SPI0, &params);               // initialise SPI
+
+DelayuS(10);
+cInterprocessSem=0;
+
+//return 100;
+return AFE_INIT_SUCCESS;
+
+
+}
+//////////////////////////////////////////////////////////////////////////////////////////
+/**----------------------------------------------------------------
+void AFEinit(void)
+Initialises AFE
+input: none
+returns:AFE_INIT_ERROR(0) if Init not succesful, AFE_INIT_SUCCESS(1) if succesful
+----------------------------------------------------------------*/
+int AFEinit3(void)
+{
+int i,j;
+//for(j=0;j<10;j++){ //init is done 10 times
+
+SPI_init();
+
+//-------SPI initalisation-----------
+SPI_Params_init(&params);                       // initialises parameters to defaults
+params.bitRate  = 500000;
+params.transferTimeout=100;
+params.transferMode=SPI_MODE_BLOCKING;              //SPI_MODE_CALLBACK;
+//params.transferCallbackFxn=SPICallbackFunction;
+params.frameFormat = SPI_POL0_PHA1;             // this is Motorola format
+params.mode        = SPI_MASTER;
+handle = SPI_open(0, &params);              // initialise SPI
+
+spiHandle=handle;
+bDataReadinProgress=0;
+
+
+if (!spiHandle) {
+    iSPIStatus=0;
+    return AFE_INIT_ERROR;
+} else {
+    iSPIStatus=1;                                       // MARK SPI open is succesful
+}
+
+
+HardwareResetAFE();
+ResetAFE();
+DelayuS(10);
+AFEChipSelect();
+DelayuS(10);
+
+cSpiTxBuffer[0] = AFE_OPCODE_STOP;
+cSpiTxBuffer[1] = AFE_OPCODE_SDATAC;
+cSpiTxBuffer[2] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[3] = 0;                             // we need to read one ID register
+cSpiTxBuffer[4] = 0xFF;
+i=SendtoAFE2 (4,1);                             //Read ID byte. It should be 0x92
+if (i==AFE_TRANSFER_ERR){
+    return AFE_INIT_ERROR;
+}
+if (cSpiRxBuffer1[0]!=AFE_DEFINED_ID){
+    return AFE_INIT_ERROR;
+}
+
+DelayuS(10);
+
+//-------------------------------------------------------------------------------------------------------------------------
+
+//--------------------configuration1 AS PER THE DATASHEET ------------------------
+
+
+cSpiTxBuffer[0] = AFE_OPCODE_SDATAC;
+i=SendtoAFE2(1,0);
+
+cSpiTxBuffer[0] = AFE_OPCODE_RESET;
+i=SendtoAFE2(1,0);
+DelayuS(10); //internal voltage startup time
+
+i=0;
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CONFIG3;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] =0xC6;//0xC6;   //fed externallyAVSS+AVDD/2 externally; 0x04  RLD AmplifierEnabled
+
+//cSpiTxBuffer[i++] =0xCC;   //fed externallyAVSS+AVDD/2 externally; 0x04  RLD AmplifierEnabled
+
+i=SendtoAFE2 (i,40);                             //Read ID byte. It should be 0x92
+DelayuS(15000); //internal voltage startup time=150ms
+
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+
+i=0;
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CONFIG1;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = 0x86;
+//cSpiTxBuffer[i++] = 0x85;
+                                    //D2:0 data output rate
+                                        //06=250 SPS,04=1KSPS,03=2kSPS
+                                        // D8=0 LP mode, 1 HR mode
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CONFIG2;
+cSpiTxBuffer[i++] = 0x00;
+//cSpiTxBuffer[i++] =0x00;                  //NO_INTERNAL_TEST_SIGNAL;
+cSpiTxBuffer[i++] =0x00;                    //INTERNAL_TEST_SIGNAL ON;                       //D4=INT_TEST=1 generates internal etst signal, =0 no test signal
+                                        //D1:0=00 or 01 decides freq of test signal
+                                        // D2=amplitude 0 lower, 1 higher amplitude
+
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+//cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_LOFF;
+//cSpiTxBuffer[i++] = 0x00;
+//cSpiTxBuffer[i++] = 0xF3;
+//                                        //RLDREF signalis internal
+//i=SendtoAFE2 (i,40);
+//
+//i=0;
+//cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+//cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+//cSpiTxBuffer[2] = 0xFF;
+//i=SendtoAFE2 (2,40);
+//i=0;
+//
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CH1SET;           //   D6:4 PGA gain .
+                                                            //      000=gain 6
+                                                            //      001=gain 1
+                                                            //      010=gain 2
+                                                            //      011=gain 3
+                                                            //      100=gain 4
+                                                            //      101=gain 8
+                                                            //      110=gain 12
+
+                                                            // D2:0 =00 external signal
+                                                            //      =001input shorted
+                                                            //      =101 test signal
+
+cSpiTxBuffer[i++] = 0x00;
+//cSpiTxBuffer[i++] = 0x20;  // 0x10;  //external signal channel
+cSpiTxBuffer[i++] =NOISE_MEASUREMENT|CH_PDWN;////VOLTAGE_MEASUREMENT; //NOISE_MEASUREMENT;  // internal signal
+i=SendtoAFE2 (i,20);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CH2SET;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] =0x10;// 0x10;//NOISE_MEASUREMENT|CH_PDWN;//CH_GAIN|CH2_P_RLD; //Channel 2 RLD Enabled // EXTERNAL_SIG
+                        /////NOISE_MEASUREMENT|CH_PDWN;////;//INTERNAL_TEST_SIGNAL_CH; //NOISE_MEASUREMENT|CH_PDWN;//VOLTAGE_MEASUREMENT;//NOISE_MEASUREMENT;
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CH3SET;
+cSpiTxBuffer[i++] =0x00;
+cSpiTxBuffer[i++] =0x15;//0x15;//NOISE_MEASUREMENT|CH_PDWN;//0x00;//0x10;//NOISE_MEASUREMENT|CH_PDWN;//NOISE_MEASUREMENT;    //Noise measurement
+
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CH4SET;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = NOISE_MEASUREMENT|CH_PDWN;;//NOISE_MEASUREMENT; //noise  masurement
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CH5SET;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] =NOISE_MEASUREMENT|CH_PDWN;;//|CH_PDWN;//NOISE_MEASUREMENT;//internal test signal CH_GAIN|CH2_P_RLD
+
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CH6SET;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = NOISE_MEASUREMENT|CH_PDWN;//VOLTAGE_MEASUREMENT; EXTERNAL_SIG//NOISE_MEASUREMENT;//internal test signal
+                                                // D6:4 = GAIN..
+                                                // 000=6,001=1,010=2,011=3,100=4,101=8,110=12
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CH7SET;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] =NOISE_MEASUREMENT|CH_PDWN;//NOISE_MEASUREMENT|CH_PDWN;//INTERNAL_TEST_SIGNAL_CH; //EXTERNAL_SIG;//NOISE_MEASUREMENT;//internal test signal                                   //   gain is 3 and test signal is given as input for mux
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CH8SET;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = NOISE_MEASUREMENT|CH_PDWN;//INTERNAL_TEST_SIGNAL_CH;;//EXTERNAL_SIG; //internal test signal                                  //   gain is 3 and test signal is given as input for mux
+i=SendtoAFE2 (i,40);
+
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+//////////////////////////////////////////////RLD SENSE/////////////////////////////////////////////////////////////
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_RLD_SENSP;//sense 7
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = 0x02;//NOISE_MEASUREMENT|CH_PDWN;//INTERNAL_TEST_SIGNAL_CH; //EXTERNAL_SIG;//NOISE_MEASUREMENT;//internal test signal                                   //   gain is 3 and test signal is given as input for mux
+i=SendtoAFE2 (i,40);
+//
+//
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+//
+//
+//
+//
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_RLD_SENSN; //sense 7
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = 0x02;//NOISE_MEASUREMENT|CH_PDWN;//INTERNAL_TEST_SIGNAL_CH; //EXTERNAL_SIG;//NOISE_MEASUREMENT;//internal test signal                                   //   gain is 3 and test signal is given as input for mux
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+//////////////////////////////////////////////RLD SENSE//////////////////////////////////////////////
+
+///RLD SENSE
+//cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_RLD_SENSP;//sense 7
+//cSpiTxBuffer[i++] = 0x00;
+//cSpiTxBuffer[i++] = 0x40;//NOISE_MEASUREMENT|CH_PDWN;//INTERNAL_TEST_SIGNAL_CH; //EXTERNAL_SIG;//NOISE_MEASUREMENT;//internal test signal                                   //   gain is 3 and test signal is given as input for mux
+//i=SendtoAFE2 (i,40);
+//
+//
+//i=0;
+//cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+//cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+//cSpiTxBuffer[2] = 0xFF;
+//i=SendtoAFE2 (2,40);
+//i=0;
+//
+//
+//
+//
+//cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_RLD_SENSN; //sense 7
+//cSpiTxBuffer[i++] = 0x00;
+//cSpiTxBuffer[i++] = 0x40;//NOISE_MEASUREMENT|CH_PDWN;//INTERNAL_TEST_SIGNAL_CH; //EXTERNAL_SIG;//NOISE_MEASUREMENT;//internal test signal                                   //   gain is 3 and test signal is given as input for mux
+//i=SendtoAFE2 (i,40);
+//
+//i=0;
+//cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+//cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+//cSpiTxBuffer[2] = 0xFF;
+//i=SendtoAFE2 (2,40);
+//i=0;
+//
+//
+
+//---------------------------------------------------------------------------------------------------
+/*
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_RLD_SENSP;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = 0x00;                                   //   gain is 3 and test signal is given as input for mux
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG |AFE_RLD_SENSN;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = 0x00;                                   //   gain is 3 and test signal is given as input for mux
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG |AFE_LOFF_SENSP;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = 0xff;                                   //   gain is 3 and test signal is given as input for mux
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG |AFE_LOFF_SENSN;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = 0x02;                                   //   gain is 3 and test signal is given as input for mux
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG |AFE_LOFF_FLIP;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = 0x00;                                   //   gain is 3 and test signal is given as input for mux
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG |AFE_LOFF_STATP;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = 0x07;                                   //   gain is 3 and test signal is given as input for mux
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG |AFE_LOFF_STATN;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = 0x60;                                   //   gain is 3 and test signal is given as input for mux
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG |AFE_LOFF_STATN;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = 0x60;                                   //   gain is 3 and test signal is given as input for mux
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG |AFE_LOFF_GPIO;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = 0x00;                                   //   gain is 3 and test signal is given as input for mux
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG |AFE_PACE;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = 0x00;                                   //   gain is 3 and test signal is given as input for mux
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+i=0;
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG |AFE_RESP;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = 0xF0;                                   //   gain is 3 and test signal is given as input for mux
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+//i=0;
+*/
+//------------------------------------------------------------------------------
+//These bits select one of the eight electrode inputs of channels 1
+//to 4.
+//bit D3=PD_WCTA =1 powerd on 0=off
+//D2,D1,D0
+//000 = Channel 1 positive input connected to WCTA amplifier
+//001 = Channel 1 negative input connected to WCTA amplifier
+//010 = Channel 2 positive input connected to WCTA amplifier
+//011 = Channel 2 negative input connected to WCTA amplifier
+//100 = Channel 3 positive input connected to WCTA amplifier
+//101 = Channel 3 negative input connected to WCTA amplifier
+//110 = Channel 4 positive input connected to WCTA amplifier
+//111 = Channel 4 negative input connected to WCTA amplifier
+////////////////////////////////////////////////////////////////////////////////
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG |AFE_WCT1;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = WCTA_POWERED_ON | WCTA_CHANNELNO;  //chanell 3   set to wct powerd                       //
+i=SendtoAFE2 (i,40);
+
+cSpiTxBuffer[i++] = AFE_OPCODE_WREG |AFE_WCT2;
+cSpiTxBuffer[i++] = 0x00;
+cSpiTxBuffer[i++] = WCTB_POWERED_ON | WCTB_CHANNELNO;  //chanell 3   set to wct powerd                       //
+i=SendtoAFE2 (i,40);
+
+i=0;
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+//i=0;
+
+//cSpiTxBuffer[i] = 0xFF;
+//i=SendtoAFE2 (i,0);                               //Read ID byte. It should be 0x92
+if (i==AFE_TRANSFER_ERR){
+    return AFE_INIT_ERROR;
+}
+ResetScanBuffer();
+
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE2 (2,40);
+
+
+cSpiTxBuffer[0] = AFE_OPCODE_STOP;
+i=SendtoAFE2 (1,0);
+
+cSpiTxBuffer[0] = AFE_OPCODE_SDATAC;
+i=SendtoAFE2 (1,0);
+DelayuS(10000);
+DelayuS(10000);
+DelayuS(10000);
+DelayuS(10000);
+DelayuS(10000);
+DelayuS(10000);
+
+
+//cSpiTxBuffer[0] = AFE_OPCODE_RDATAC;
+//i=SendtoAFE2 (1,0);
+
+//-------------------------------------------------------------------------------------------------------------------------
+
+
+                        //Read ID byte. It should be 0x92
+
+//cSpiTxBuffer[i++] = AFE_OPCODE_WREG | AFE_CONFIG2;
+//cSpiTxBuffer[i++] = 0x00;
+//cSpiTxBuffer[i++] = 0x15;             //10-AC,13-DC,15- double freq & amplitude internal test signal
+
+//System_printf("Initialisation Complete");
+
+
+ResetScanBuffer();
+cSpiTxferCmplete=0;
+
+DelayuS(10);
+DelayuS(10);
+DelayuS(10);
+
+
+//---------------------------------------------------------
+//Set up AFE DRDY signal to generate interrupt
+//    Board_BUTTON0  | PIN_INPUT_EN | PIN_PULLUP | PIN_IRQ_NEGEDGE, - This generates interrupt on falling edge
+// DRDY signl is active low
+
+/*
+Error_init(&eb);
+Hwi_Params_init(&hwiParams);
+hwiParams.arg = 5;
+hwiDRDY = Hwi_create(id, hwiFunction, &hwiParams, &eb);
+if (hwiDRDY == NULL) {
+    return AFE_INIT_ERROR;                          // eror occured while creating HWI
+}
+*/
+//
+
+Error_init(&eb);
+Swi_Params_init(&swiParams);
+
+
+hswiDRDY = Swi_create((ti_sysbios_knl_Swi_FuncPtr)swiDRDYFunction, &swiParams,&eb);     // this sofwtare interrupt will be generated by DRDY HWI
+
+if (hswiDRDY == NULL) {
+    return AFE_INIT_ERROR;                          // eror occured while creating SWI
+}
+PIN_registerIntCb(hCpuPins, DRDY_Callback);
+PIN_setConfig(hCpuPins, PIN_BM_IRQ, AFE_DRDY   | PIN_IRQ_NEGEDGE);
+PIN_setInterrupt(hCpuPins, AFE_DRDY|PIN_IRQ_NEGEDGE);
+
+
+//Error_init(&eb);
+//Swi_Params_init(&swiParams);
+//
+//
+//hswiDRDY = Swi_create((ti_sysbios_knl_Swi_FuncPtr)swiDRDYFunction, &swiParams,&eb);     // this sofwtare interrupt will be generated by DRDY HWI
+//
+////hswiDRDY = Swi_create(swiDRDYFunction, &swiParams,&eb);
+//if (hswiDRDY == NULL) {
+//    return AFE_INIT_ERROR;                          // eror occured while creating SWI
+//}
+////
+////Swi_Params_init(&swiParams);
+////hSPIover = Swi_create((ti_sysbios_knl_Swi_FuncPtr)swiSPITransferFunction, &swiParams, &eb);       // this sofwtare interrupt will be generated once SPI Transfer for data read from AFE is over
+////if (hSPIover == NULL) {
+////  return AFE_INIT_ERROR;                          // eror occured while creating SWI
+////}
+////
+//PIN_registerIntCb(hCpuPins, DRDY_Callback);
+//PIN_setConfig(hCpuPins, PIN_BM_IRQ, AFE_DRDY   | PIN_IRQ_NEGEDGE);
+//PIN_setInterrupt(hCpuPins, AFE_DRDY|PIN_IRQ_NEGEDGE);
+//
+
+
+//---------------------------------------------------------
+
+AFEstart();
+DelayuS(10);
+
+cSpiTxBuffer[0] = AFE_OPCODE_RDATAC;
+SendtoAFE (handle,1,0);                                 //restart continuous read
+
+AFEChipUnSelect();
+DelayuS(10);
+AFEChipSelect();
+
+SPI_close(handle);
+
+SPI_Params_init(&params);
+params.bitRate  =4000000;  //4mhz
+params.transferTimeout=1000;
+params.transferMode=SPI_MODE_CALLBACK;//SPI_MODE_BLOCKING
+params.transferCallbackFxn=SPICallbackFunction;
+params.frameFormat = SPI_POL0_PHA1;             // this is Motorola format
+params.mode        = SPI_MASTER;
+handle = SPI_open(SPI0, &params);               // initialise SPI
+
+DelayuS(10);
+cInterprocessSem=0;
+
+return AFE_INIT_SUCCESS;
+}
+
+/**----------------------------------------------------------------------
+ * void ReadData (uint8 iCount, uint8* ptr)
+ * Rountien send number of bytes to AFE
+ * input: iCount: no of bytes to be sent
+ *  returns: AFE_TRANSFER_ERR(-1) if transfer counld not take palce
+ *          else, no. of bytes that have bene received as reply
+ *          (0 or more- depends on iRecv COunt specified)
+ ----------------------------------------------------------------------*/
+//int OneReadDataFromAFE(void)
+//{
+//int i;
+//bool b1;
+//
+//uint8_t cTempTx[100],cTempRx[100];
+//uint8_t *ptr,*ptr1;
+//
+//ptr1=ptr=NextScanBuffer();
+//
+//for (i=0;i<AFE_DATA_LENGTH;i++){
+//  cTempTx[i]=0x00;
+//  *ptr1++=0xA5;
+//}
+//
+//transaction.count = AFE_DATA_LENGTH;
+//transaction.txBuf = cTempTx;
+//transaction.rxBuf = ptr;
+//
+//b1=SPI_transfer(handle, &transaction);
+//if (!b1) return AFE_TRANSFER_ERR;                     // returns error condition
+//
+//return AFE_DATA_LENGTH;                           // no. of bytes that has been received
+//}
+//
+/**----------------------------------------------------------------------
+ * void ReadData (uint8 iCount, uint8* ptr)
+ * Rountien send number of bytes to AFE
+ * input: iCount: no of bytes to be sent
+ *  returns: AFE_TRANSFER_ERR(-1) if transfer counld not take palce
+ *          else, no. of bytes that have bene received as reply
+ *          (0 or more- depends on iRecv COunt specified)
+ ----------------------------------------------------------------------*/
+//int ReadDataFromAFE(void)
+//{
+//int i;
+//bool b1;
+//
+//uint8_t cTempTx[100],cTempRx[100];
+//
+//for (i=0;i<AFE_DATA_LENGTH;i++){
+//  cTempTx[i]=0x00;
+//  cTempRx[i]=0xFF;
+//}
+//
+//transaction.count = AFE_DATA_LENGTH;
+//transaction.txBuf = cTempTx;
+//transaction.rxBuf = cTempRx;
+//
+//b1=SPI_transfer(handle, &transaction);
+//if (!b1) return AFE_TRANSFER_ERR;                     // returns error condition
+//
+//
+////debug
+//for (i=0;i<AFE_DATA_LENGTH;i++){
+//  cSpiRxBuffer1[i]=cTempRx[i];    // ignore the response of MISO for sent bytes and consider only received bytes
+//
+//}
+////debug
+//
+//
+//return AFE_DATA_LENGTH;                           // no. of bytes that has been received
+//}
+
+/**----------------------------------------------------------------------
+ * void ReadData (uint8 iCount, uint8* ptr)
+ * Rountien send number of bytes to AFE
+ * input: iCount: no of bytes to be sent
+ *  returns: AFE_TRANSFER_ERR(-1) if transfer counld not take palce
+ *          else, no. of bytes that have bene received as reply
+ *          (0 or more- depends on iRecv COunt specified)
+ ----------------------------------------------------------------------*/
+//int ReadDataFromAFE1(void)
+//{
+//int i;
+//bool b1;
+//
+//uint8_t cTempTx[100],cTempRx[100];
+//
+//for (i=0;i<AFE_DATA_LENGTH;i++){
+//  cTempTx[i]=0x00;
+//  cTempRx[i]=0xFF;
+//}
+//
+//transaction.count = AFE_DATA_LENGTH;
+//transaction.txBuf = cTempTx;
+//transaction.rxBuf = ptrbuf = NextScanBuffer();
+//
+//b1=SPI_transfer(handle, &transaction);
+//if (!b1) return AFE_TRANSFER_ERR;                     // returns error condition
+//
+//return AFE_DATA_LENGTH;                           // no. of bytes that has been received
+//}
+
+
+/**----------------------------------------------------------------------
+ * int ReadDataFromAFEasynchronous(void)
+ * Read the
+ * input: iCount: no of bytes to be sent
+ * returns: AFE_TRANSFER_ERR(-1) if transfer counld not take palce
+ *          else, no. of bytes that have bene received as reply
+ *          (0 or more- depends on iRecv COunt specified)
+ ----------------------------------------------------------------------*/
+int ReadDataFromAFEasynchronous(void)
+{
+int i;
+    bool b1;
+
+    uint8_t cTempTx[100];
+    uint8_t cTempRx[100];
+    for (i=0;i<AFE_DATA_LENGTH;i++){
+        cTempTx[i]=0x00;
+        cTempRx[i]=0xFF;
+    }
+
+
+    transaction.count = AFE_DATA_LENGTH;
+    transaction.txBuf = cTempTx;
+    i=NextScanBuffer();
+    if (i==0){
+        ptrbuf=cExternalbuffer;            //returns required address in global variable ptrbuf
+        iPacketNumber=0;
+        //return AFE_DATA_LENGTH;          // no. of bytes that has been received
+    }
+    transaction.rxBuf = ptrbuf;
+    transaction.arg=&iIntCount;
+
+
+
+    b1=SPI_transfer(handle, &transaction);
+    if(!b1){
+    PIN_setInterrupt(hCpuPins, AFE_DRDY|PIN_IRQ_NEGEDGE);
+    return AFE_TRANSFER_ERR;                        // returns error condition
+    }
+    return AFE_DATA_LENGTH;                         // no. of bytes that has been received
+}
+
+/**----------------------------------------------------------
+void PutDa0-taIntoScanBuffer(void)
+Puts one scan data of 27 bytes ifromSPiReceive buffer intto next available scan buffer
+input: none . takes global storage for spi receive buffer
+returns:
+------------------------------------------------------------*/
+//void PutDataIntoScanBuffer(void)
+//{
+//int i,j,k;
+//
+//j=ScanBuffer.iIptr;                 //Transfer Data to Scan buffer at In pointer
+//for (i=0;i<27;i++){
+//    ScanBuffer.ScanData[j].cOneScanData[i]=cSpiRxBuffer1[i];
+//}
+//j++;
+//if (j>=SCAN_BUF_SIZE) j=0;
+//ScanBuffer.iIptr=j;
+//
+//
+//j=ScanBuffer.iCount;
+//if (j>=SCAN_BUF_SIZE){
+//    ScanBuffer.iOverrunFlag=1;
+//
+//} else {
+//    j++;
+//    ScanBuffer.iCount=j;
+//}
+//}
+
+
+
+/**----------------------------------------------------------
+ * int GetIOptrCount(void)
+Des: Returns the  IOptrCount
+------------------------------------------------------------*/
+int GetIOptrCount(void)
+{
+   int i,j,k;
+   j=ScanBuffer.iOptr;                 //return the iopointer length
+   return j;
+}
+
+
+
+/**----------------------------------------------------------
+void PutDataIntoScanBuffer(void)
+Puts one scan data of 27 bytes ifromSPiReceive buffer intto next available scan buffer
+input: none . takes global storage for spi receive buffer
+returns:0 if no data, 1 if data read into SPI receive buffer
+------------------------------------------------------------*/
+int GetDataFromScanBuffer(void)
+{
+int i,j,k;
+//if (iInNextScanBuffer==0) return 0;
+cBleTxferCmplete=1;
+//iInGetData=1;
+if (ScanBuffer.iOverrunFlag>0){
+    for (i=0;i<27;i++){
+        cSpiRxBuffer2[i]=0xAA;
+    }
+    return 1;
+}
+j=ScanBuffer.iOptr;                 //Transfer Data to Scan buffer at In pointer
+for (i=0;i<27;i++){
+    cSpiRxBuffer2[i]=ScanBuffer.ScanData[j].cOneScanData[i];
+}
+j++;
+if (j>=SCAN_BUF_SIZE) j=0;
+ScanBuffer.iOptr=j;
+ScanBuffer.iCount--;
+cBleTxferCmplete=0;
+//iInGetData=0;
+return 1;
+}
+
+/*-----------------------------------------------------------
+static void AFE_performPeriodicTask(void)
+gets control on CLock event
+Raises semaphore for task to proceed
+input:
+returns: nothing
+-----------------------------------------------------------*/
+void AFE_performPeriodicTask(void)
+{
+uint8_t i,j;
+
+i=ReadDataFromAFE();
+if (i==AFE_TRANSFER_ERR) return;            // error while reading.
+PutDataIntoScanBuffer();
+}
+
+/**----------------------------------------------------------------
+void AFEinit(void)
+Initialises AFE
+input: none
+returns:AFE_INIT_ERROR(0) if Init not succesful, AFE_INIT_SUCCESS(1) if succesful
+----------------------------------------------------------------*/
+/*-----------
+int AFEinit(void)
+{
+int i;
+
+
+SPI_init();
+
+//-------SPI initalisation-----------
+SPI_Params_init(&params);                       // initialises parameters to defaults
+params.bitRate  = 500000;
+params.dataSize=8;
+params.transferTimeout=100;
+params.transferMode=SPI_MODE_CALLBACK;
+params.transferCallbackFxn=SPICallbackFunction;
+params.frameFormat = SPI_POL0_PHA1;             // this is Motorola format
+params.mode        = SPI_MASTER;
+handle = SPI_open(SPI0, &params);               // initialise SPI
+spiHandle=handle;
+bDataReadinProgress=0;
+if (!spiHandle) {
+    iSPIStatus=0;
+    return AFE_INIT_ERROR;
+} else {
+    iSPIStatus=1;                                       // MARK SPI open is succesful
+}
+
+HardwareResetAFE();
+ResetAFE();
+
+AFEChipSelect();
+AFEChipUnSelect();
+AFEChipSelect();
+
+cSpiTxBuffer[0] = AFE_OPCODE_STOP;
+cSpiTxBuffer[1] = AFE_OPCODE_SDATAC;
+cSpiTxBuffer[2] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[3] = 0;                                    // we need to read one ID register
+cSpiTxBuffer[4] = 0xFF;
+i=SendtoAFE (handle,4,1);                               //Read ID byte. It should be 0x92
+if (i==AFE_TRANSFER_ERR){
+    return AFE_INIT_ERROR;
+}
+if (cSpiRxBuffer1[0]!=AFE_DEFINED_ID){
+    return AFE_INIT_ERROR;
+}
+
+
+
+//--------------------configuration------------------------
+cSpiTxBuffer[0] = AFE_OPCODE_WREG | AFE_CONFIG1;
+cSpiTxBuffer[1] = 0x00;
+cSpiTxBuffer[2] = 0x06;
+cSpiTxBuffer[3] = AFE_OPCODE_WREG | AFE_CONFIG2;
+cSpiTxBuffer[4] = 0x00;
+cSpiTxBuffer[5] = 0x10;                         // internal test signal
+cSpiTxBuffer[6] = AFE_OPCODE_WREG | AFE_CONFIG3;
+cSpiTxBuffer[7] = 0x00;
+cSpiTxBuffer[8] = 0x48;
+cSpiTxBuffer[9] = AFE_OPCODE_WREG | AFE_CH6SET;
+cSpiTxBuffer[10] = 0x00;
+cSpiTxBuffer[11] = 0x15;                                    //   gain is 3 and test signal is given as input for mux
+cSpiTxBuffer[12] = 0xFF;
+i=SendtoAFE (handle,12,0);                              //Read ID byte. It should be 0x92
+if (i==AFE_TRANSFER_ERR){
+    return AFE_INIT_ERROR;
+}
+
+cSpiTxBuffer[0] = AFE_OPCODE_RREG | AFE_ID;
+cSpiTxBuffer[1] = 19;                                   // we need to read one ID register
+cSpiTxBuffer[2] = 0xFF;
+i=SendtoAFE (handle,2,20);                              //Read ID byte. It should be 0x92
+
+ResetScanBuffer();
+
+Error_init(&eb);
+Swi_Params_init(&swiParams);
+hswiDRDY = Swi_create(swiDRDYFunction, &swiParams, &eb);        // this sofwtare interrupt will be generated by DRDY HWI
+if (hswiDRDY == NULL) {
+    return AFE_INIT_ERROR;                          // eror occured while creating SWI
+}
+
+Swi_Params_init(&swiParams);
+hSPIover = Swi_create(swiSPITransferFunction, &swiParams, &eb);     // this sofwtare interrupt will be generated once SPI Transfer for data read from AFE is over
+if (hSPIover == NULL) {
+    return AFE_INIT_ERROR;                          // eror occured while creating SWI
+}
+
+
+//-------------------------------------------------------------
+
+AFEstart();                                             //give hardware bit instruction start ADC
+cSpiTxBuffer[0] = AFE_OPCODE_START;
+cSpiTxBuffer[1] = AFE_OPCODE_RDATAC;
+SendtoAFE (handle,2,0);                                 //restart continuous read
+
+AFEChipUnSelect();
+DelayuS(10);
+AFEChipSelect();
+
+SPI_close(handle);
+
+SPI_Params_init(&params);
+params.bitRate  = 2000000;
+params.dataSize=8;
+params.transferTimeout=100;
+params.transferMode=SPI_MODE_BLOCKING;;//SPI_MODE_CALLBACK;
+//params.transferCallbackFxn=SPICallbackFunction;
+params.frameFormat = SPI_POL0_PHA1;             // this is Motorola format
+params.mode        = SPI_MASTER;
+handle = SPI_open(SPI0, &params);               // initialise SPI
+
+
+return AFE_INIT_SUCCESS;
+}
+------------------------------------*/
+
+
+/*********************************************************************
+ * @fn      HeartRate_init
+ *
+ * @brief   Initialization function for the Heart Rate application thread.
+ *          This is called during initialization and should contain
+ *          any application specific initialization (ie. hardware
+ *          initialization/setup, table initialization, power up
+ *          notification ...).
+ *
+ * @param   none
+ *
+ * @return  none
+ */
+void HeartRate_init(void)
+{
+
+unsigned int i;
+  // ******************************************************************
+  // N0 STACK API CALLS CAN OCCUR BEFORE THIS CALL TO ICall_registerApp
+  // ******************************************************************
+  // Register the current thread as an ICall dispatcher application
+  // so that the application can send and receive messages.
+
+
+
+   ICall_registerApp(&selfEntity, &syncEvent);
+
+  // Hard code the DB Address till CC2650 board gets its own IEEE address.
+  //uint8_t bdAddress[B_ADDR_LEN] = { 0x22, 0x22, 0x22, 0x22, 0x22, 0x22 };
+  //HCI_EXT_SetBDADDRCmd(bdAddress);
+
+  // Set device's Sleep Clock Accuracy
+  //HCI_EXT_SetSCACmd(40);
+
+  // Create an RTOS queue for message from profile to be sent to app.
+  appMsgQueue = Util_constructQueue(&appMsg);
+
+  // Create one-shot clocks for internal periodic events.
+  Util_constructClock(&measPerClock, HeartRate_clockHandler,
+                      DEFAULT_HEARTRATE_PERIOD, 0, false,
+                      HEARTRATE_MEAS_PERIODIC_EVT);
+  Util_constructClock(&battPerClock, HeartRate_clockHandler,
+                      DEFAULT_BATT_PERIOD, 0, false,
+                      HEARTRATE_BATT_PERIODIC_EVT);
+
+  // Initialize keys on SRF06.
+ // Board_initKeys(HeartRate_keyPressHandler);
+
+  // Setup the GAP Peripheral Role Profile.
+  {
+#if AUTO_ADV
+    uint8_t initial_advertising_enable = TRUE;
+#else
+    // Press right key to initiate advertising and measurement.
+    uint8_t initial_advertising_enable = TRUE;
+#endif //AUTO_ADV
+
+    // By setting this to zero, the device will go into the waiting state after
+    // being discoverable for 30.72 second, and will not being advertising again
+    // until the enabler is set back to TRUE.
+    uint16_t gapRole_AdvertOffTime = 0;
+
+    uint8_t enable_update_request  = DEFAULT_ENABLE_UPDATE_REQUEST;
+    uint16_t desired_min_interval  = DEFAULT_DESIRED_MIN_CONN_INTERVAL;
+    uint16_t desired_max_interval  = DEFAULT_DESIRED_MAX_CONN_INTERVAL;
+    uint16_t desired_slave_latency = DEFAULT_DESIRED_SLAVE_LATENCY;
+    uint16_t desired_conn_timeout  = DEFAULT_DESIRED_CONN_TIMEOUT;
+
+    // Set the GAP Role Parameters.
+    GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t),
+                          &initial_advertising_enable);
+    GAPRole_SetParameter(GAPROLE_ADVERT_OFF_TIME, sizeof(uint16_t),
+                          &gapRole_AdvertOffTime);
+
+    GAPRole_SetParameter(GAPROLE_SCAN_RSP_DATA, sizeof (scanData),
+                          scanData);
+    GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData),
+                          advertData);
+
+    GAPRole_SetParameter(GAPROLE_PARAM_UPDATE_ENABLE, sizeof(uint8_t),
+                          &enable_update_request);
+    GAPRole_SetParameter(GAPROLE_MIN_CONN_INTERVAL, sizeof(uint16_t),
+                          &desired_min_interval);
+    GAPRole_SetParameter(GAPROLE_MAX_CONN_INTERVAL, sizeof(uint16_t),
+                          &desired_max_interval);
+    GAPRole_SetParameter(GAPROLE_SLAVE_LATENCY, sizeof(uint16_t),
+                          &desired_slave_latency);
+    GAPRole_SetParameter(GAPROLE_TIMEOUT_MULTIPLIER, sizeof(uint16_t),
+                          &desired_conn_timeout);
+  }
+
+  // Set the GAP Characteristics.
+  GGS_SetParameter(GGS_DEVICE_NAME_ATT, GAP_DEVICE_NAME_LEN, attDeviceName);
+
+  // Setup the GAP Bond Manager.
+  {
+    uint8_t pairMode = GAPBOND_PAIRING_MODE_WAIT_FOR_REQ;
+    uint8_t mitm = FALSE;
+    uint8_t ioCap = GAPBOND_IO_CAP_DISPLAY_ONLY;
+    uint8_t bonding = TRUE;
+
+    GAPBondMgr_SetParameter(GAPBOND_PAIRING_MODE, sizeof (uint8_t),
+                             &pairMode);
+    GAPBondMgr_SetParameter(GAPBOND_MITM_PROTECTION, sizeof (uint8_t), &mitm);
+    GAPBondMgr_SetParameter(GAPBOND_IO_CAPABILITIES, sizeof (uint8_t),
+                             &ioCap);
+    GAPBondMgr_SetParameter(GAPBOND_BONDING_ENABLED, sizeof (uint8_t),
+                             &bonding);
+  }
+
+  // Initialize GATT attributes.
+  GGS_AddService(GATT_ALL_SERVICES);         // GAP
+  GATTServApp_AddService(GATT_ALL_SERVICES); // GATT attributes
+
+  // Add heart rate service.
+  HeartRate_AddService(GATT_ALL_SERVICES);
+  // Add device info service.
+  DevInfo_AddService();
+  // Add battery service.
+  //Batt_AddService();
+
+  // Setup the Heart Rate Characteristic Values.
+  {
+    uint8_t sensLoc = HEARTRATE_SENS_LOC_WRIST;
+    HeartRate_SetParameter(HEARTRATE_SENS_LOC, sizeof (uint8_t), &sensLoc);
+  }
+
+  // Setup Battery Characteristic Values.
+  {
+    uint8_t critical = DEFAULT_BATT_CRITICAL_LEVEL;
+    //Batt_SetParameter(BATT_PARAM_CRITICAL_LEVEL, sizeof(uint8_t), &critical);
+  }
+
+  // Register for Heart Rate service callback.
+  HeartRate_Register(&HeartRate_serviceCB);
+
+  // Register for Battery service callback.
+ // Batt_Register (&HeartRate_battCB);
+
+  // Start the Device.
+  GAPRole_StartDevice(&heartRatePeripheralCB);
+
+  // Start the Bond Manager.
+  GAPBondMgr_Register((gapBondCBs_t *)&heartRateBondCB);
+
+  // Register with GAP for HCI/Host messages
+  GAP_RegisterForMsgs(selfEntity);
+
+#if !defined (USE_LL_CONN_PARAM_UPDATE)
+  // Get the currently set local supported LE features
+  // The HCI will generate an HCI event that will get received in the main
+  // loop
+  HCI_LE_ReadLocalSupportedFeaturesCmd();
+#endif // !defined (USE_LL_CONN_PARAM_UPDATE)
+  //for(;;){
+  //AFEinit1();
+  //AFEinit2();
+  //while(1);
+//   if(i==100){
+//       return;
+//
+//   }
+  //}
+
+
+}
+
+/*********************************************************************
+ * @fn      HeartRate_taskFxn
+ *
+ * @brief   Application task entry point for the Heart Rate.
+ *
+ * @param   none
+ *
+ * @return  none
+ */
+static void HeartRate_taskFxn(UArg a0, UArg a1)
+{
+
+  HeartRate_init();
+  AFEinit3();
+//  AFEinit2();
+
+
+
+//HCI_EXT_SetTxPowerCmd(HCI_EXT_TX_POWER_5_DBM); //Setting the ble stack 2DBM
+
+
+//  SPICC26XXDMA_close();
+  // Application main loop.
+
+   for(;;)
+   {
+     uint32_t events;
+
+//     events = Event_pend(syncEvent, Event_Id_NONE, HEARTRATE_ALL_EVENTS,
+//                         ICALL_TIMEOUT_FOREVER);
+ //    HEARTRATE_MEAS_PERIODIC_EVT
+
+
+     events = Event_pend(syncEvent, Event_Id_NONE, (HEARTRATE_MEAS_PERIODIC_EVT|HEARTRATE_QUEUE_EVT),
+                              ICALL_TIMEOUT_FOREVER);
+
+     if (events)
+     {
+
+
+
+
+       ICall_EntityID dest;
+       ICall_ServiceEnum src;
+       ICall_HciExtEvt *pMsg = NULL;
+       if (ICall_fetchServiceMsg(&src, &dest,
+                                 (void **)&pMsg) == ICALL_ERRNO_SUCCESS)
+       {
+         if ((src == ICALL_SERVICE_CLASS_BLE) && (dest == selfEntity))
+         {
+           // Process inter-task message.
+           HeartRate_processStackMsg((ICall_Hdr *)pMsg);
+         }
+
+         if (pMsg)
+         {
+           ICall_freeMsg(pMsg);
+         }
+       }
+
+       // If RTOS queue is not empty, process app message.
+       //if (events & HEARTRATE_QUEUE_EVT)
+       //{
+         while (!Queue_empty(appMsgQueue))
+         {
+           heartRateEvt_t *pMsg = (heartRateEvt_t*)Util_dequeueMsg(appMsgQueue);
+           if (pMsg)
+           {
+             // Process message.
+             HeartRate_processAppMsg(pMsg);
+
+             // Free the space from the message.
+             ICall_free(pMsg);
+           }
+         }
+
+
+
+       // Heart rate service periodic task.
+       if (events & HEARTRATE_MEAS_PERIODIC_EVT)
+       {
+         HeartRate_measPerTask();
+       }
+
+
+
+      // }
+
+
+     }
+   }
+ }
+
+/*********************************************************************
+ * @fn      HeartRate_processStackMsg
+ *
+ * @brief   Process an incoming stack message.
+ *
+ * @param   pMsg - message to process
+ *
+ * @return  none
+ */
+static void HeartRate_processStackMsg(ICall_Hdr *pMsg)
+{
+  switch (pMsg->event)
+  {
+    case GATT_MSG_EVENT:
+      HeartRate_processGattMsg((gattMsgEvent_t *)pMsg);
+      break;
+
+    case HCI_GAP_EVENT_EVENT:
+      {
+
+        // Process HCI message
+        switch(pMsg->status)
+        {
+          case HCI_COMMAND_COMPLETE_EVENT_CODE:
+            // Process HCI Command Complete Event
+            {
+
+#if !defined (USE_LL_CONN_PARAM_UPDATE)
+              // This code will disable the use of the LL_CONNECTION_PARAM_REQ
+              // control procedure (for connection parameter updates, the
+              // L2CAP Connection Parameter Update procedure will be used
+              // instead). To re-enable the LL_CONNECTION_PARAM_REQ control
+              // procedures, define the symbol USE_LL_CONN_PARAM_UPDATE
+
+              // Parse Command Complete Event for opcode and status
+              hciEvt_CmdComplete_t* command_complete = (hciEvt_CmdComplete_t*) pMsg;
+              uint8_t   pktStatus = command_complete->pReturnParam[0];
+
+              //find which command this command complete is for
+              switch (command_complete->cmdOpcode)
+              {
+                case HCI_LE_READ_LOCAL_SUPPORTED_FEATURES:
+                  {
+                    if (pktStatus == SUCCESS)
+                    {
+                      uint8_t featSet[8];
+
+                      // get current feature set from received event (bits 1-9 of
+                      // the returned data
+                      memcpy( featSet, &command_complete->pReturnParam[1], 8 );
+
+                      // Clear bit 1 of byte 0 of feature set to disable LL
+                      // Connection Parameter Updates
+                      CLR_FEATURE_FLAG( featSet[0], LL_FEATURE_CONN_PARAMS_REQ );
+
+                      // Update controller with modified features
+                      HCI_EXT_SetLocalSupportedFeaturesCmd( featSet );
+                    }
+                  }
+                  break;
+
+                default:
+                  //do nothing
+                  break;
+              }
+#endif // !defined (USE_LL_CONN_PARAM_UPDATE)
+
+            }
+            break;
+
+          default:
+            break;
+        }
+      }
+      break;
+
+
+    default:
+      // Do nothing.
+      break;
+  }
+}
+
+/*********************************************************************
+ * @fn      HeartRate_processGattMsg
+ *
+ * @brief   Process GATT messages.
+ *
+ * @param   pMsg - pointer the the GATT message.
+ *
+ * @return  none
+ */
+static void HeartRate_processGattMsg(gattMsgEvent_t *pMsg)
+{
+  GATT_bm_free(&pMsg->msg, pMsg->method);
+}
+
+/*********************************************************************
+ * @fn      HeartRate_processAppMsg
+ *
+ * @brief   Process an incoming callback from a profile.
+ *
+ * @param   pMsg - message to process
+ *
+ * @return  none
+ */
+static void HeartRate_processAppMsg(heartRateEvt_t *pMsg)
+{
+  switch (pMsg->hdr.event)
+  {
+    case HEARTRATE_STATE_CHANGE_EVT:
+      HeartRate_stateChangeEvt((gaprole_States_t)pMsg->hdr.state);
+      break;
+
+    case HEARTRATE_KEY_CHANGE_EVT:
+      HeartRate_handleKeys(0, pMsg->hdr.state);
+      break;
+
+    case HEARTRATE_MEAS_EVT:
+      HeartRate_heartRateEvt(pMsg->hdr.state);
+      break;
+
+    case HEARTRATE_BATT_EVT:
+      HeartRate_battEvt(pMsg->hdr.state);
+      break;
+
+    // Passcode event
+    case HEARTRATE_PASSCODE_NEEDED_EVT:
+      HeartRate_processPasscode();
+      break;
+
+    default:
+      // Do nothing.
+      break;
+  }
+}
+
+/*********************************************************************
+ * @fn      HeartRate_keyPressHandler
+ *
+ * @brief   Key event handler function.
+ *
+ * @param   a0 - ignored
+ *
+ * @return  none
+ */
+void HeartRate_keyPressHandler(uint8_t keys)
+{
+  // Enqueue the event.
+  HeartRate_enqueueMsg(HEARTRATE_KEY_CHANGE_EVT, keys);
+}
+
+/*********************************************************************
+ * @fn      HeartRate_handleKeys
+ *
+ * @brief   Handles all key events for this device.
+ *
+ * @param   shift - true if in shift/alt.
+ * @param   keys - bit field for key events. Valid entries:
+ *                 HAL_KEY_SW_2
+ *                 HAL_KEY_SW_1
+ *
+ * @return  none
+ */
+static void HeartRate_handleKeys(uint8_t shift, uint8_t keys)
+{
+  // Left key.
+//  if (keys & KEY_LEFT)
+//  {
+//    // If not in a connection, toggle advertising on and off.
+//    if(gapProfileState != GAPROLE_CONNECTED)
+//    {
+//      // Set fast advertising interval for user-initiated connections.
+//      GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MIN, DEFAULT_FAST_ADV_INTERVAL);
+//      GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MAX, DEFAULT_FAST_ADV_INTERVAL);
+//      GAP_SetParamValue(TGAP_GEN_DISC_ADV_MIN, DEFAULT_FAST_ADV_DURATION);
+//
+//      // Toggle GAP advertisement status.
+//      // Set flag if advertising was cancelled.
+//      if (HeartRate_toggleAdvertising() == FALSE)
+//      {
+//        advCancelled = TRUE;
+//      }
+//    }
+//  }
+//
+//  // Right key.
+//  if (keys & KEY_RIGHT)
+//  {
+//    // Set simulated measurement flag index.
+//    if (++flagsIdx == HEARTRATE_FLAGS_IDX_MAX)
+//    {
+//      flagsIdx = 0;
+//    }
+//  }
+}
+
+/*********************************************************************
+ * @fn      HeartRate_toggleAdvertising
+ *
+ * @brief   Toggle advertising state.
+ *
+ * @param   none
+ *
+ * @return  status - TRUE if advertising, FALSE otherwise.
+ */
+static bool HeartRate_toggleAdvertising(void)
+{
+  uint8_t advState;
+
+  // Find the current GAP advertisement status.
+  GAPRole_GetParameter(GAPROLE_ADVERT_ENABLED, &advState);
+
+  // Get the opposite state.
+  advState = !advState;
+
+  // Change the GAP advertisement status to opposite of current status.
+  GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t),
+                       &advState);
+
+  return advState;
+}
+
+/*********************************************************************
+ * @fn      HeartRate_measNotify
+ *
+ * @brief   Prepare and send a heart rate measurement notification.
+ *
+ * @return  none
+ */
+static void HeartRate_measNotify(void)
+{
+  unsigned  char i=0;
+  attHandleValueNoti_t heartRateMeas;
+
+  heartRateMeas.pValue = GATT_bm_alloc(gapConnHandle, ATT_HANDLE_VALUE_NOTI,
+                                       HEARTRATE_MEAS_LEN, NULL);
+  if (heartRateMeas.pValue != NULL)
+  {
+    uint8_t *p = heartRateMeas.pValue;
+    uint8_t flags = heartRateflags[flagsIdx];
+
+    // Build heart rate measurement structure from simulated values.
+    *p++ ='C'; //flags;
+    *p++ ='C';// heartRateBpm;
+
+//    if (flags & HEARTRATE_FLAGS_FORMAT_UINT16)
+//    {
+//      // Additional byte for 16 bit format.
+//      *p++ = 0;
+//    }
+//
+//    if (flags & HEARTRATE_FLAGS_ENERGY_EXP)
+//    {
+//      *p++ = LO_UINT16(heartRateEnergyLvl);
+//      *p++ = HI_UINT16(heartRateEnergyLvl);
+//    }
+//
+    for(i=0;i<60;i++)*p++=i;
+
+   // if (flags & HEARTRATE_FLAGS_RR)
+   // {
+//      *p++ =1;// LO_UINT16(heartRateRrInterval);
+//      *p++ =2;//HI_UINT16(heartRateRrInterval);
+//      *p++ =3 LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//      *p++ = LO_UINT16(heartRateRrInterval);
+//      *p++ = HI_UINT16(heartRateRrInterval);
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//      *p++ = LO_UINT16(heartRateRrInterval);
+//      *p++ = HI_UINT16(heartRateRrInterval);
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//      *p++ = LO_UINT16(heartRateRrInterval);
+//      *p++ = HI_UINT16(heartRateRrInterval);
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//      *p++ = LO_UINT16(heartRateRrInterval);
+//      *p++ = HI_UINT16(heartRateRrInterval);
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//      *p++ = LO_UINT16(heartRateRrInterval);
+//      *p++ = HI_UINT16(heartRateRrInterval);
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//      *p++ = LO_UINT16(heartRateRrInterval);
+//      *p++ = HI_UINT16(heartRateRrInterval);
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//     //32
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//     //34
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//     ///36
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//      //37
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//
+//      //37
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//
+//      //37
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//
+//      //37
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//
+//      //37
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//
+//      //37
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+
+
+
+      //      *p++ = LO_UINT16(heartRateRrInterval);
+//      *p++ = HI_UINT16(heartRateRrInterval);
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//      *p++ = LO_UINT16(heartRateRrInterval);
+//      *p++ = HI_UINT16(heartRateRrInterval);
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//      *p++ = LO_UINT16(heartRateRrInterval);
+//      *p++ = HI_UINT16(heartRateRrInterval);
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//      *p++ = LO_UINT16(heartRateRrInterval);
+//      *p++ = HI_UINT16(heartRateRrInterval);
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//      *p++ = LO_UINT16(heartRateRrInterval);
+//      *p++ = HI_UINT16(heartRateRrInterval);
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//      *p++ = LO_UINT16(heartRateRrInterval);
+//      *p++ = HI_UINT16(heartRateRrInterval);
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//      *p++ = LO_UINT16(heartRateRrInterval);
+//      *p++ = HI_UINT16(heartRateRrInterval);
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//
+//      *p++ = LO_UINT16(heartRateRrInterval);
+//      *p++ = HI_UINT16(heartRateRrInterval);
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//      *p++ = LO_UINT16(heartRateRrInterval);
+//      *p++ = HI_UINT16(heartRateRrInterval);
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//      *p++ = LO_UINT16(heartRateRrInterval);
+//      *p++ = HI_UINT16(heartRateRrInterval);
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//      *p++ = LO_UINT16(heartRateRrInterval);
+//      *p++ = HI_UINT16(heartRateRrInterval);
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//      *p++ = LO_UINT16(heartRateRrInterval);
+//      *p++ = HI_UINT16(heartRateRrInterval);
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//      *p++ = LO_UINT16(heartRateRrInterval);
+//      *p++ = HI_UINT16(heartRateRrInterval);
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+//      *p++ = LO_UINT16(heartRateRrInterval);
+//      *p++ = HI_UINT16(heartRateRrInterval);
+//      *p++ = LO_UINT16(heartRateRrInterval2);
+//      *p++ = HI_UINT16(heartRateRrInterval2);
+
+
+
+
+
+
+
+      //}
+
+    heartRateMeas.len = (uint8)(p - heartRateMeas.pValue);
+    i=heartRateMeas.len;
+
+    cDebug=heartRateMeas.len;
+    cDebug=heartRateMeas.len;
+
+    // Send notification.
+    if (HeartRate_MeasNotify(gapConnHandle, &heartRateMeas) != SUCCESS)
+    {
+      GATT_bm_free((gattMsg_t *)&heartRateMeas, ATT_HANDLE_VALUE_NOTI);
+    }
+
+    // Update simulated values.
+//    heartRateEnergyLvl += HEARTRATE_ENERGY_INCREMENT;
+//    if (++heartRateBpm == HEARTRATE_BPM_MAX)
+//    {
+//      heartRateBpm = HEARTRATE_BPM_DEFAULT;
+//    }
+//
+//    heartRateRrInterval = heartRateRrInterval2 = HEARTRATE_BPM2RR(heartRateBpm);
+  }
+}
+
+/*********************************************************************
+ * @fn      HeartRate_stateChangeCB
+ *
+ * @brief   Callback from GAP Role indicating a role state change.
+ *
+ * @param   newState - new state
+ *
+ * @return  none
+ */
+static void HeartRate_stateChangeCB(gaprole_States_t newState)
+{
+  // Enqueue the event.
+  HeartRate_enqueueMsg(HEARTRATE_STATE_CHANGE_EVT, newState);
+}
+
+/*********************************************************************
+ * @fn      HeartRate_stateChangeEvt
+ *
+ * @brief   Notification from the profile of a state change.
+ *
+ * @param   newState - new state
+ *
+ * @return  none
+ */
+static void HeartRate_stateChangeEvt(gaprole_States_t newState)
+{
+  // If no change to the GAP Role state has occurred
+  if (gapProfileState == newState)
+  {
+    return;
+  }
+
+  // If connected
+  if (newState == GAPROLE_CONNECTED)
+  {
+    // Get connection handle.
+    GAPRole_GetParameter(GAPROLE_CONNHANDLE, &gapConnHandle);
+  }
+  // If disconnected
+  else if (gapProfileState == GAPROLE_CONNECTED &&
+           newState != GAPROLE_CONNECTED)
+  {
+    // Stop periodic measurement of heart rate.
+    Util_stopClock(&measPerClock);
+
+    if (newState == GAPROLE_WAITING_AFTER_TIMEOUT)
+    {
+      // Link loss timeout-- use fast advertising
+      GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MIN, DEFAULT_FAST_ADV_INTERVAL);
+      GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MAX, DEFAULT_FAST_ADV_INTERVAL);
+      GAP_SetParamValue(TGAP_GEN_DISC_ADV_MIN, DEFAULT_FAST_ADV_DURATION);
+    }
+    else
+    {
+      // Else use slow advertising
+      GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MIN, DEFAULT_SLOW_ADV_INTERVAL);
+      GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MAX, DEFAULT_SLOW_ADV_INTERVAL);
+      GAP_SetParamValue(TGAP_GEN_DISC_ADV_MIN, DEFAULT_SLOW_ADV_DURATION);
+    }
+
+    // Enable advertising.
+    HeartRate_toggleAdvertising();
+  }
+  // If advertising stopped
+  else if (gapProfileState == GAPROLE_ADVERTISING &&
+            newState == GAPROLE_WAITING)
+  {
+    // If advertising stopped by user
+    if (advCancelled)
+    {
+      // Disable advertising.
+      advCancelled = FALSE;
+    }
+    // Else if fast advertising switch to slow
+    else if (GAP_GetParamValue(TGAP_GEN_DISC_ADV_INT_MIN) == DEFAULT_FAST_ADV_INTERVAL)
+    {
+      GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MIN, DEFAULT_SLOW_ADV_INTERVAL);
+      GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MAX, DEFAULT_SLOW_ADV_INTERVAL);
+      GAP_SetParamValue(TGAP_GEN_DISC_ADV_MIN, DEFAULT_SLOW_ADV_DURATION);
+
+      // Enable advertising.
+      HeartRate_toggleAdvertising();
+    }
+
+    else
+    {
+          // Test mode: continue advertising.
+          HeartRate_toggleAdvertising();
+     }
+  }
+     else if (newState == GAPROLE_WAITING_AFTER_TIMEOUT)
+     {
+        // Test mode: continue advertising.
+        HeartRate_toggleAdvertising();
+     }
+
+ //#if AUTO_ADV
+//    else
+//    {
+//      // Test mode: continue advertising.
+//      HeartRate_toggleAdvertising();
+//    }
+//#endif //AUTO_ADV
+//  }
+//#if AUTO_ADV
+//  else if (newState == GAPROLE_WAITING_AFTER_TIMEOUT)
+//  {
+//    // Test mode: continue advertising.
+//    HeartRate_toggleAdvertising();
+//  }
+//#endif //AUTO_ADV
+// If started
+  else if (newState == GAPROLE_STARTED)
+  {
+    // Set the system ID from the bd addr.
+    uint8_t systemId[DEVINFO_SYSTEM_ID_LEN];
+    GAPRole_GetParameter(GAPROLE_BD_ADDR, systemId);
+
+    // Shift three bytes up.
+    systemId[7] = systemId[5];
+    systemId[6] = systemId[4];
+    systemId[5] = systemId[3];
+
+    // Set middle bytes to zero.
+    systemId[4] = 0;
+    systemId[3] = 0;
+
+    // Pass systemId to the Device Info service.
+    DevInfo_SetParameter(DEVINFO_SYSTEM_ID, DEVINFO_SYSTEM_ID_LEN, systemId);
+  }
+
+  // Update GAP profile state.
+  gapProfileState = newState;
+}
+
+/*********************************************************************
+ * @fn      HeartRate_serviceCB
+ *
+ * @brief   Callback function for heart rate service.
+ *
+ * @param   event - service event
+ *
+ * @return  none
+ */
+static void HeartRate_serviceCB(uint8_t event)
+{
+  // Enqueue the message.
+  HeartRate_enqueueMsg(HEARTRATE_MEAS_EVT, event);
+}
+
+/*********************************************************************
+ * @fn      HeartRate_heartRateEvt
+ *
+ * @brief   event handler for heart rate service callbacks.
+ *
+ * @param   event - service event
+ *
+ * @return  none
+ */
+static void HeartRate_heartRateEvt(uint8_t event)
+{
+  if (event == HEARTRATE_MEAS_NOTI_ENABLED)
+  {
+    // If connected start periodic measurement.
+    if (gapProfileState == GAPROLE_CONNECTED)
+    {
+      Util_startClock(&measPerClock);
+    }
+  }
+  else if (event == HEARTRATE_MEAS_NOTI_DISABLED)
+  {
+    // Stop periodic measurement.
+    Util_stopClock(&measPerClock);
+  }
+  else if (event == HEARTRATE_COMMAND_SET)
+  {
+    // Reset energy expended.
+    heartRateEnergyLvl = 0;
+  }
+}
+
+/*********************************************************************
+ * @fn      HeartRate_battCB
+ *
+ * @brief   Callback function for battery service.
+ *
+ * @param   event - service event
+ *
+ * @return  none
+ */
+static void HeartRate_battCB(uint8_t event)
+{
+  // Enqueue the message.
+  HeartRate_enqueueMsg(HEARTRATE_BATT_EVT, event);
+}
+
+/*********************************************************************
+ * @fn      HeartRate_passcodeCB
+ *
+ * @brief   Passcode callback.
+ *
+ * @return  none
+ */
+static void HeartRate_passcodeCB(uint8_t *deviceAddr, uint16_t connHandle,
+                                 uint8_t uiInputs, uint8_t uiOutputs)
+{
+  // Enqueue the event.
+  HeartRate_enqueueMsg(HEARTRATE_PASSCODE_NEEDED_EVT, 0);
+}
+
+/*********************************************************************
+ * @fn      RunningSensor_processPasscode
+ *
+ * @brief   Process the Passcode request.
+ *
+ * @return  none
+ */
+static void HeartRate_processPasscode(void)
+{
+  uint16_t connectionHandle;
+  GAPRole_GetParameter(GAPROLE_CONNHANDLE, &connectionHandle);
+
+  // This app uses a default passcode. A real-life scenario would handle all
+  // pairing scenarios and likely generate this randomly.
+  GAPBondMgr_PasscodeRsp(connectionHandle, SUCCESS, B_APP_DEFAULT_PASSCODE);
+}
+
+/*********************************************************************
+ * @fn      HeartRate_battEvt
+ *
+ * @brief   Event handler for battery service callbacks.
+ *
+ * @param   event - service event
+ *
+ * @return  none
+ */
+static void HeartRate_battEvt(uint8_t event)
+{
+//  if (event == BATT_LEVEL_NOTI_ENABLED)
+//  {
+//    // If connected start periodic measurement.
+//    if (gapProfileState == GAPROLE_CONNECTED)
+//    {
+//      Util_startClock(&battPerClock);
+//    }
+//  }
+//  else if (event == BATT_LEVEL_NOTI_DISABLED)
+//  {
+//    // Stop periodic measurement.
+//    Util_stopClock(&battPerClock);
+//  }
+}
+
+/*********************************************************************
+ * @fn      HeartRate_clockHandler
+ *
+ * @brief   Handler function for clock timeouts.
+ *
+ * @param   none
+ *
+ * @return  none
+ */
+static void HeartRate_clockHandler(UArg arg)
+{
+  Event_post(syncEvent, arg);
+}
+
+/*********************************************************************
+ * @fn      HeartRate_perTask
+ *
+ * @brief   Perform a periodic heart rate measurement.
+ *
+ * @param   none
+ *
+ * @return  none
+ */
+static void HeartRate_measPerTask(void)
+{
+  if (gapProfileState == GAPROLE_CONNECTED)
+  {
+    // Send heart rate measurement notification.
+   //HeartRate_measNotify();
+  //    PIN_setInterrupt(hCpuPins, AFE_DRDY|PIN_IRQ_DIS);
+      if(cSpiTxferCmplete==0){ //spi transfer is completed
+
+          OneDataNotification4();
+      }
+    //  PIN_setInterrupt(hCpuPins, AFE_DRDY|PIN_IRQ_NEGEDGE);//enable Drdy interrupt
+
+    // Restart timer.
+  }
+  Util_startClock(&measPerClock);
+//  Util_startClock(&HRperiodicClock);
+
+return;
+    //DEbug - toggle pin to see if routine is getting control
+    //iToggle++;
+    //if((iToggle &0x01) ==1){
+    //  PIN_setOutputValue(hCpuPins,OPEN1,0);
+    //}else{
+    //  PIN_setOutputValue(hCpuPins,OPEN1,1);
+    //}
+    //debug
+    //PIN_setInterrupt(hCpuPins, AFE_DRDY|PIN_IRQ_DIS); // disable drdyinterrupt
+    //Util_startClock(&HRperiodicClock);
+
+    //SPI_close(handle);
+    //
+    //if (gapProfileState == GAPROLE_CONNECTED) {
+    //     // OneDataNotification2();
+    //      //if(cSpiTxferCmplete==0){ //spi transfer is completed
+    //        OneDataNotification2();
+    //       // iSPIDMAAbortCnt=SPIDMAABORT_T;
+    //      //}
+    //  }
+    //Util_startClock(&HRperiodicClock);
+    //return;
+
+    //if (gapProfileState == GAPROLE_CONNECTED) {
+    //   // OneDataNotification2();
+    //    if(cSpiTxferCmplete==0){ //spi transfer is completed
+    //      OneDataNotification();
+    //     // iSPIDMAAbortCnt=SPIDMAABORT_T;
+    //    }
+    //}
+    //return;
+
+
+    if(iSPIDMAAbortCnt>0){
+        iSPIDMAAbortCnt--;
+        if(iSPIDMAAbortCnt==0){
+            SPI_close(handle);
+            AFEinit1();               // initialise SPI
+            PIN_setInterrupt(hCpuPins, AFE_DRDY|PIN_IRQ_NEGEDGE);//enable Drdy interrupt
+            iSPIDMAAbortCnt=SPIDMAABORT_T;
+            //fDRYCount=1;
+        } else {
+            if (gapProfileState == GAPROLE_CONNECTED) {
+               // OneDataNotification2();
+                if(cSpiTxferCmplete==0){ //spi transfer is completed
+                  OneDataNotification();
+                }
+            }
+        }
+    }
+    //PIN_setInterrupt(hCpuPins, AFE_DRDY|PIN_IRQ_NEGEDGE);//enable Drdy interrupt
+
+
+
+
+
+}
+
+/*********************************************************************
+ * @fn      OneDataNotification1
+ *
+ * void   Prepare and send  AFE all 8 channel data
+ *
+ * @return  none
+ *
+*********************************************************************/
+static void OneDataNotification1(void)
+{
+
+    uint8_t loop,i,j,k;
+    uint16_t Sample_data;
+    uint32_t  lTime;
+    uint8 Reserve1=0;
+    uint8 Reserve2=0;
+    union {
+        uint32_t l1;
+        char c1[4];
+    } uGettime;
+    uint8_t *p ;
+    uint8_t flags ;
+    uint8_t *ptr ;
+    int i1,i2,i3,i4;
+
+
+ //   lTime=Timestamp_get32();//CLK_getltime();
+
+    attHandleValueNoti_t heartRateMeas;
+
+   i=ScanBuffer.iCount;
+   if (i<6) return;          //no data to send as message
+    for (i=0;i<j;i++){
+
+           //Transfer all the 18 bytes of all the  8channel
+           //At Present only two channels are used but store only one cha
+           for (i2=0;i2<6;i2++){
+               i1=GetDataFromScanBuffer();
+               cTempBfr[0][i2*3]=cSpiRxBuffer2[3];//contain channel 1 ist byte the 3bytes
+               cTempBfr[0][(i2*3)+1]=cSpiRxBuffer2[4];//contain channel 2 the 2 bytes
+               cTempBfr[0][(i2*3)+2]=cSpiRxBuffer2[5];//contain the 3bytes
+
+               cTempBfr[1][i2]=cSpiRxBuffer2[6];//contain the 3bytes
+               cTempBfr[1][i2]=cSpiRxBuffer2[7];//contain the 3bytes
+               cTempBfr[1][i2]=cSpiRxBuffer2[8];//contain the 3bytes
+           }
+           //SEND TWO CHANNEL OF DATA
+           for(i3=0;i3<2;i3++){  ///
+               heartRateMeas.pValue = GATT_bm_alloc(gapConnHandle, ATT_HANDLE_VALUE_NOTI,
+                                                       HEARTRATE_MEAS_LEN, NULL);
+              if (heartRateMeas.pValue != NULL) {
+                  p= heartRateMeas.pValue;
+                  flags= heartRateflags[flagsIdx];
+                  ptr= heartRateMeas.pValue;
+                  if(iPacketNumber1[i3]>0xfff)iPacketNumber1[i3]=0;
+
+                  iPacketNumber1Copy=(iPacketNumber1[i3])+(i3+1*0x10000);// add the channel number
+                  *ptr++=(iPacketNumber1Copy & 0xff00)>>8;// store MSb first and then LSB to the assigned ptr
+                  *ptr++=(iPacketNumber1Copy & 0xff);
+                  iPacketNumber1[i3]++;
+                  p=ptr;
+                  for (i2=0;i2++;i2<18){
+                   *ptr++=0xaa;               //fillup with dummy data
+                  }
+                  ptr=p;
+                  i4=1;
+                  for (i2=0;i2<6;i2++){
+                     TransferFilteredData(ptr,&cTempBfr[i3][i2]);          // filter and transfer into required buffer
+                     ptr+=3;
+                  }
+                  if (i4==1){
+                      heartRateMeas.len = DATA_PACKET_LEN;    //(uint8)(p- heartRateMeas.pValue);
+                      // Send notification.
+                      if (HeartRate_MeasNotify(gapConnHandle, &heartRateMeas) != SUCCESS) {
+                          GATT_bm_free((gattMsg_t *)&heartRateMeas, ATT_HANDLE_VALUE_NOTI);
+                      }
+                  }
+              }
+       }
+    }
+}
+
+
+
+/*********************************************************************
+ * @fn      HeartRate_battPerTask
+ *
+ * @brief   Perform a periodic task for battery measurement.
+ *
+ * @param   none
+ *
+ * @return  none
+ */
+static void HeartRate_battPerTask(void)
+{
+//  if (gapProfileState == GAPROLE_CONNECTED)
+//  {
+//    // Perform battery level check.
+//    Batt_MeasLevel();
+//
+//    // Restart timer.
+//    Util_startClock(&battPerClock);
+//  }
+}
+
+/*********************************************************************
+ * @fn      HeartRate_enqueueMsg
+ *
+ * @brief   Creates a message and puts the message in RTOS queue.
+ *
+ * @param   event - message event.
+ * @param   state - message state.
+ *
+ * @return  TRUE or FALSE
+ */
+static uint8_t HeartRate_enqueueMsg(uint8_t event, uint8_t state)
+{
+  heartRateEvt_t *pMsg;
+
+  // Create dynamic pointer to message.
+  if (pMsg = ICall_malloc(sizeof(heartRateEvt_t)))
+  {
+    pMsg->hdr.event = event;
+    pMsg->hdr.state = state;
+
+    // Enqueue the message.
+    return Util_enqueueMsg(appMsgQueue, syncEvent, (uint8*)pMsg);
+  }
+
+  return FALSE;
+}
+
+
+/*********************************************************************
+*********************************************************************/
+
+
+/*********************************************************************
+ * @fn OneDataNotification
+ *
+ * @brief   Prepare and send a heart rate measurement notification.
+ *
+ * @return  none
+ **********************************************************************/
+static void OneDataNotification(void)
+{
+
+  uint8_t loop,i,j,k;
+  uint16_t Sample_data;
+  uint32_t  lTime;
+  uint8 Reserve1=0;
+  uint8 Reserve2=0;
+  union {
+      uint32_t l1;
+      char c1[4];
+  } uGettime;
+  uint8_t *p ;
+  uint8_t flags ;
+  uint8_t *ptr ;
+  int i1,i2,i3;
+
+
+  //lTime=Timestamp_get32();//CLK_getltime();
+
+  attHandleValueNoti_t heartRateMeas;
+
+ i=ScanBuffer.iCount;
+ if (i<6) return;          //no data to send as message
+
+  j=(i/6);
+  for (i=0;i<j;i++){
+      heartRateMeas.pValue = GATT_bm_alloc(gapConnHandle, ATT_HANDLE_VALUE_NOTI,
+                                           HEARTRATE_MEAS_LEN, NULL);
+      if (heartRateMeas.pValue != NULL) {
+         p= heartRateMeas.pValue;
+         flags= heartRateflags[flagsIdx];
+         ptr= heartRateMeas.pValue;
+
+
+         *ptr++=(iPacketNumber & 0xff00)>>8;            // store MSb first and thn LSB
+         *ptr++=(iPacketNumber & 0xff);
+
+         iPacketNumber++;
+         p=ptr;
+
+         for (i2=0;i2<18;i2++){
+             *ptr++=0xaa;               //fillup with dummy data
+         }
+         ptr=p;
+        // uGettime.l1=lTime;
+         if (ScanBuffer.iCount>=6){             // data is not yet available, so wait for it
+             i3=1;
+             for (i2=0;i2<6;i2++){
+                 i1=GetDataFromScanBuffer();
+                 if (i1!=0){
+                    TransferFilteredData(ptr,&cSpiRxBuffer2[(CHANNEL_NO*3)]);          // filter and transfer into required buffer
+                     ptr+=3;
+                 }
+             }
+    //-----------------------------------------------------------------------------------
+        }
+
+         if (i3==1){
+//#if(fDRYCount!=1) return 0;
+//#         fDRYCount=0;
+            heartRateMeas.len = DATA_PACKET_LEN;    //(uint8)(p- heartRateMeas.pValue);
+            // Send notification.
+            if (HeartRate_MeasNotify(gapConnHandle, &heartRateMeas) != SUCCESS) {
+              GATT_bm_free((gattMsg_t *)&heartRateMeas, ATT_HANDLE_VALUE_NOTI);
+            }
+         }
+
+
+     }
+    }
+
+}
+
+
+
+/*********************************************************************
+ * @fn OneDataNotification
+ *
+ * @brief   Prepare and send a heart rate measurement notification.
+ *
+ * @return  none
+ **********************************************************************/
+static void OneDataNotification4(void)
+{
+
+    uint8_t loop,i,j,k;
+     uint16_t Sample_data;
+     uint32_t  lTime;
+     uint8 Reserve1=0;
+     uint8 Reserve2=0;
+     union {
+         uint32_t l1;
+         char c1[4];
+     } uGettime;
+     uint8_t *p ;
+     uint8_t flags ;
+     uint8_t *ptr ;
+     int i1,i2,i3;
+
+     attHandleValueNoti_t heartRateMeas;
+
+    i=ScanBuffer.iCount;
+    if (i<6) return;          //no data to send as message
+
+     j=(i/6);
+     for (i=0;i<j;i++){
+         heartRateMeas.pValue = GATT_bm_alloc(gapConnHandle, ATT_HANDLE_VALUE_NOTI,
+                                              HEARTRATE_MEAS_LEN, NULL);
+         if (heartRateMeas.pValue != NULL) {
+            p= heartRateMeas.pValue;
+            flags= heartRateflags[flagsIdx];
+            ptr= heartRateMeas.pValue;
+
+
+            *ptr++=(iPacketNumber & 0xff00)>>8;            // store MSb first and thn LSB
+            *ptr++=(iPacketNumber & 0xff);
+
+//            iPacketNumber++;
+            p=ptr;
+
+            for (i2=0;i2<38;i2++){         //Two channel data
+                *ptr++=0xaa;               //fillup with dummy data
+            }
+            ptr=p;
+            //uGettime.l1=lTime;
+            if (ScanBuffer.iCount>=6){             // data is not yet available, so wait for it
+                i3=1;
+                for (i2=0;i2<6;i2++){
+                    i1=GetDataFromScanBuffer();
+                    if (i1!=0){
+//                        // to increase the numbeer of channel please add
+//
+//
+//                       TransferChannelData(cTempBfr[0][i2*3],&cSpiRxBuffer2[(CHANNEL_NO*3)]);          // filter and transfer into required buffer
+//                       TransferChannelData(cTempBfr[1][i2*3],&cSpiRxBuffer2[(CHANNEL_NO+1)*3]);          // filter and transfer into required buffer
+                            cTempBfr[0][i2*3]=cSpiRxBuffer2[6];//contain channel 1 ist byte the 3bytes
+                            cTempBfr[0][(i2*3)+1]=cSpiRxBuffer2[7];//contain channel 2 the 2 bytes
+                            cTempBfr[0][(i2*3)+2]=cSpiRxBuffer2[81];//contain the 3bytes
+
+                            cTempBfr[1][i2*3]=cSpiRxBuffer2[9];//contain the 3bytes
+                            cTempBfr[1][(i2*3)+1]=cSpiRxBuffer2[10];//contain the 3bytes
+                            cTempBfr[1][(i2*3)+2]=cSpiRxBuffer2[11];//contain the 3bytes
+
+
+
+                    }
+                }
+                for (i2=0;i2<6;i2++){
+                   TransferFilteredData1(ptr,&cTempBfr[0][i2*3]);          // filter and transfer into required buffer
+                   ptr+=3;
+                }
+                p=ptr;
+               *ptr=(iPacketNumber & 0xff00)>>8;            // store MSb first and thn LSB
+                ptr++;
+               *ptr=(iPacketNumber & 0xff);
+                ptr++;
+                for (i2=0;i2<6;i2++){
+
+                   TransferFilteredData(ptr,&cTempBfr[1][i2*3]);          // filter and transfer into required buffer
+                   ptr+=3;
+
+                }
+//
+                ptr=p;
+                 //transfer the next channel bytes
+                iPacketNumber++;
+
+       //-----------------------------------------------------------------------------------
+           }
+
+            if (i3==1){
+               heartRateMeas.len = DATA_PACKET_LEN;    //(uint8)(p- heartRateMeas.pValue);
+               // Send notification.
+               if (HeartRate_MeasNotify(gapConnHandle, &heartRateMeas) != SUCCESS) {
+                 GATT_bm_free((gattMsg_t *)&heartRateMeas, ATT_HANDLE_VALUE_NOTI);
+               }
+            }
+
+
+        }
+       }
+
+
+
+
+
+}
+
+/*********************************************************************
+ * @fn OneDataNotification
+ *
+ * @brief   Prepare and send a heart rate measurement notification.
+ *
+ * @return  none
+ **********************************************************************/
+static void OneDataNotification5(void)
+{
+
+    uint8_t loop,i,j,k;
+     uint16_t Sample_data;
+     uint32_t  lTime;
+     uint8 Reserve1=0;
+     uint8 Reserve2=0;
+     union {
+         uint32_t l1;
+         char c1[4];
+     } uGettime;
+     uint8_t *p ;
+     uint8_t flags ;
+     uint8_t *ptr ;
+     int i1,i2,i3;
+
+     attHandleValueNoti_t heartRateMeas;
+
+    i=ScanBuffer.iCount;
+    if (i<6) return;          //no data to send as message
+
+     j=(i/6);
+     for (i=0;i<j;i++){
+         heartRateMeas.pValue = GATT_bm_alloc(gapConnHandle, ATT_HANDLE_VALUE_NOTI,
+                                              HEARTRATE_MEAS_LEN, NULL);
+         if (heartRateMeas.pValue != NULL) {
+            p= heartRateMeas.pValue;
+            flags= heartRateflags[flagsIdx];
+            ptr= heartRateMeas.pValue;
+
+
+            *ptr++=(iPacketNumber & 0xff00)>>8;            // store MSb first and thn LSB
+            *ptr++=(iPacketNumber & 0xff);
+
+//            iPacketNumber++;
+            p=ptr;
+
+            for (i2=0;i2<38;i2++){         //Two channel data
+                *ptr++=0xaa;               //fillup with dummy data
+            }
+            ptr=p;
+            //uGettime.l1=lTime;
+            if (ScanBuffer.iCount>=6){             // data is not yet available, so wait for it
+                i3=1;
+                for (i2=0;i2<6;i2++){
+                    i1=GetDataFromScanBuffer();
+                    if (i1!=0){
+//                        // to increase the numbeer of channel please add
+//
+//
+//                       TransferChannelData(cTempBfr[0][i2*3],&cSpiRxBuffer2[(CHANNEL_NO*3)]);          // filter and transfer into required buffer
+//                       TransferChannelData(cTempBfr[1][i2*3],&cSpiRxBuffer2[(CHANNEL_NO+1)*3]);          // filter and transfer into required buffer
+                            cTempBfr[0][i2*3]=cSpiRxBuffer2[6];//contain channel 1 ist byte the 3bytes
+                            cTempBfr[0][(i2*3)+1]=cSpiRxBuffer2[7];//contain channel 2 the 2 bytes
+                            cTempBfr[0][(i2*3)+2]=cSpiRxBuffer2[8];//contain the 3bytes
+
+                            cTempBfr[1][i2*3]=cSpiRxBuffer2[9];//contain the 3bytes
+                            cTempBfr[1][(i2*3)+1]=cSpiRxBuffer2[10];//contain the 3bytes
+                            cTempBfr[1][(i2*3)+2]=cSpiRxBuffer2[11];//contain the 3bytes
+
+
+
+                    }
+                }
+                for (i2=0;i2<6;i2++){
+                   TransferFilteredData(ptr,&cTempBfr[0][i2*3]);          // filter and transfer into required buffer
+                   ptr+=3;
+                }
+                ptr+=1;
+                *ptr++=(iPacketNumber & 0xff00)>>8;            // store MSb first and thn LSB
+                *ptr++=(iPacketNumber & 0xff);
+
+                for (i2=0;i2<6;i2++){
+
+                   TransferFilteredData(&cTempBfr[2][i2*3],&cTempBfr[1][i2*3]);          // filter and transfer into required buffer
+                }
+                for (i2=0;i2<6;i2++){
+                    *ptr=(i2*3)+1;//cTempBfr[2][(i2*3)+1];//contain the 3bytes
+                    ptr++;
+                    *ptr=(i2*3)+1;//cTempBfr[2][(i2*3)+2];//contain the 3bytes
+                    ptr++;
+                   *ptr=(i2*3)+1;//cTempBfr[2][(i2*3)+3];
+                    ptr++;
+                }
+//
+                 //transfer the next channel bytes
+                iPacketNumber++;
+
+       //-----------------------------------------------------------------------------------
+           }
+
+            if (i3==1){
+               heartRateMeas.len = DATA_PACKET_LEN;    //(uint8)(p- heartRateMeas.pValue);
+               // Send notification.
+               if (HeartRate_MeasNotify(gapConnHandle, &heartRateMeas) != SUCCESS) {
+                 GATT_bm_free((gattMsg_t *)&heartRateMeas, ATT_HANDLE_VALUE_NOTI);
+               }
+            }
+
+
+        }
+       }
+
+
+
+
+
+}
+
+
+
+
+
+
+/*********************************************************************
+ * @fn OneDataNotification
+ *
+ * @brief   Prepare and send a heart rate measurement notification.
+ *
+ * @return  none
+ **********************************************************************/
+static void OneDataNotification3(void)
+{
+
+  uint8_t loop,i,j,k;
+  uint16_t Sample_data;
+  uint32_t  lTime;
+  uint8 Reserve1=0;
+  uint8 Reserve2=0;
+  union {
+      uint32_t l1;
+      char c1[4];
+  } uGettime;
+  uint8_t *p ;
+  uint8_t flags ;
+  uint8_t *ptr ;
+  int i1,i2,i3;
+
+
+  //lTime=Timestamp_get32();//CLK_getltime();
+
+  attHandleValueNoti_t heartRateMeas;
+
+ i=ScanBuffer.iCount;
+ if (i<18) return;          //no data to send as message
+
+  j=(i/18);
+  for (i=0;i<j;i++){
+      heartRateMeas.pValue = GATT_bm_alloc(gapConnHandle, ATT_HANDLE_VALUE_NOTI,
+                                           HEARTRATE_MEAS_LEN, NULL);
+      if (heartRateMeas.pValue != NULL) {
+         p= heartRateMeas.pValue;
+         flags= heartRateflags[flagsIdx];
+         ptr= heartRateMeas.pValue;
+
+
+         *ptr++=(iPacketNumber & 0xff00)>>8;            // store MSb first and thn LSB
+         *ptr++=(iPacketNumber & 0xff);
+
+         *ptr++=(iPacketNumber & 0xff00)>>8;            // store MSb first and thn LSB
+         *ptr++=(iPacketNumber & 0xff);
+
+         iPacketNumber++;
+         p=ptr;
+         //i1=GetDataFromScanBuffer();
+//         if(i1==0)return;
+
+
+
+
+
+         for (i2=0;i2<56;i2++){
+             *ptr++=i2;               //fillup with dummy data
+         }
+         i3=1;
+         ptr=p;
+         //uGettime.l1=lTime;
+         if (ScanBuffer.iCount>=12){             // data is not yet available, so wait for it
+             i3=1;
+             for (i2=0;i2<18;i2++){
+                 i1=GetDataFromScanBuffer();
+                 if (i1!=0){
+                    TransferFilteredData(ptr,&cSpiRxBuffer2[(CHANNEL_NO*3)]);          // filter and transfer into required buffer
+                     ptr+=3;
+                 }
+             }
+//    //-----------------------------------------------------------------------------------
+        }
+
+         if (i3==1){
+//#if(fDRYCount!=1) return 0;
+//#         fDRYCount=0;
+            heartRateMeas.len = DATA_PACKET_LEN;    //(uint8)(p- heartRateMeas.pValue);
+            // Send notification.
+            if (HeartRate_MeasNotify(gapConnHandle, &heartRateMeas) != SUCCESS) {
+              GATT_bm_free((gattMsg_t *)&heartRateMeas, ATT_HANDLE_VALUE_NOTI);
+            }
+         }
+
+
+     }
+    }
+
+}
+
+
+/*********************************************************************
+ * @fn      TransferFilteredData
+ *
+ * @brief   Adds 24 bit data to filter buffer and takesout filtered data. Transfer 3 bytes
+ *
+ * @return  none
+**********************************************************************/
+void  TransferChannelData(uint8_t* pOutptr,uint8_t* pInptr)
+{
+
+    // trnsfer the data from cirular buffer
+    long int l1,l2,l3,l4,l5,l6;
+    float f1,f2,f3;
+
+    ldata.c1[3]=0x00;
+    ldata.c1[2]=*pInptr++;          // msb of 24 bit number
+    ldata.c1[1]=*pInptr++;
+    ldata.c1[0]=*pInptr++;          // lsb of 24 bit number
+
+    *pOutptr++=ldata.c1[2];        // msb of 24 bit number
+    *pOutptr++=ldata.c1[1];
+    *pOutptr++=ldata.c1[0];        // lsb of 24 bit number
+
+
+
+}
+/*********************************************************************
+ * @fn      TransferFilteredData
+ *
+ * @brief   Adds 24 bit data to filter buffer and takesout filtered data. Transfer 3 bytes
+ *
+ * @return  none
+**********************************************************************/
+void  TransferFilteredData1(uint8_t* pOutptr,uint8_t* pInptr)
+{
+long int l1,l2,l3,l4,l5,l6;
+float f1,f2,f3;
+//////////////////////////////////////// To verfy the filltering the simulated data////////////
+//ldata.l1=Body_Sim[iBodySampleCount];
+//iBodySampleCount++;
+//if(iBodySampleCount>=2271)iBodySampleCount=0;
+//////////////////////////////////////// To verfy the filltering the simulated data////////////
+
+
+ldata.c1[3]=0x00;
+ldata.c1[2]=*pInptr++;          // msb of 24 bit number
+ldata.c1[1]=*pInptr++;
+ldata.c1[0]=*pInptr++;          // lsb of 24 bit number
+
+if ((ldata.c1[2] & 0x80)==0x80){        // if msb bit is set, it is a -ve number to check the behavour with negative sign
+    ldata.c1[3]=0xff;
+}
+
+f2=ldata.l1;
+
+if (FILTER_DC_REQUIRED){
+    f2=HPF_DC_1(f2);
+}
+
+if (FILTER_50_REQUIRED){
+    f2=NF_50_1(f2);
+}
+//
+if (FILTER_MVA_REQUIRED){
+    f2=MVAF_1(fFilterBuffer2,f2);
+}
+
+if (FILTER_MVA_REQUIRED){
+   //f2=MVAF_1(fFilterBuffer,f2);
+}
+
+
+
+if (FILTER_05_REQUIRED){
+    f2=NF_050_1(f2);//for 5 hz frequcny
+}
+
+ldata.l1=f2;
+
+*pOutptr++=ldata.c1[2];
+*pOutptr++=ldata.c1[1];
+*pOutptr++=ldata.c1[0];
+}
+
+/*********************************************************************
+ * @fn      TransferFilteredData
+ *
+ * @brief   Adds 24 bit data to filter buffer and takesout filtered data. Transfer 3 bytes
+ *
+ * @return  none
+**********************************************************************/
+void  TransferFilteredData(uint8_t* pOutptr,uint8_t* pInptr)
+{
+long int l1,l2,l3,l4,l5,l6;
+float f1,f2,f3;
+//////////////////////////////////////// To verfy the filltering the simulated data////////////
+//ldata.l1=Body_Sim[iBodySampleCount];
+//iBodySampleCount++;
+//if(iBodySampleCount>=2271)iBodySampleCount=0;
+//////////////////////////////////////// To verfy the filltering the simulated data////////////
+
+
+ldata.c1[3]=0x00;
+ldata.c1[2]=*pInptr++;          // msb of 24 bit number
+ldata.c1[1]=*pInptr++;
+ldata.c1[0]=*pInptr++;          // lsb of 24 bit number
+
+if ((ldata.c1[2] & 0x80)==0x80){        // if msb bit is set, it is a -ve number to check the behavour with negative sign
+    ldata.c1[3]=0xff;
+}
+
+f2=ldata.l1;
+
+if (FILTER_DC_REQUIRED){
+    f2=HPF_DC(f2);
+}
+
+if (FILTER_50_REQUIRED){
+    f2=NF_50(f2);
+}
+//
+if (FILTER_MVA_REQUIRED){
+    f2=MVAF(fFilterBuffer1,f2);
+}
+
+if (FILTER_MVA_REQUIRED){
+   //f2=MVAF(fFilterBuffer2,f2);
+}
+
+
+
+if (FILTER_05_REQUIRED){
+    f2=NF_05(f2);//for 5 hz frequcny
+}
+
+ldata.l1=f2;
+
+*pOutptr++=ldata.c1[2];
+*pOutptr++=ldata.c1[1];
+*pOutptr++=ldata.c1[0];
+}
+
+
+
+
+
+/*********************************************************************
+ * @fn      TransferFilteredData
+ *
+ * @brief   Adds 24 bit data to filter buffer and takesout filtered data. Transfer 3 bytes
+ *
+ * @return  none
+**********************************************************************/
+void  Cleardata (uint8_t* pOutptr,uint8_t* pInptr)
+{
+long int l1,l2,l3,l4,l5,l6;
+float f1,f2,f3;
+//////////////////////////////////////// To verfy the filltering the simulated data////////////
+//ldata.l1=Body_Sim[iBodySampleCount];
+//iBodySampleCount++;
+//if(iBodySampleCount>=2271)iBodySampleCount=0;
+//////////////////////////////////////// To verfy the filltering the simulated data////////////
+
+
+ldata.c1[3]=0x00;
+ldata.c1[2]=*pInptr++;          // msb of 24 bit number
+ldata.c1[1]=*pInptr++;
+ldata.c1[0]=*pInptr++;          // lsb of 24 bit number
+
+if ((ldata.c1[2] & 0x80)==0x80){        // if msb bit is set, it is a -ve number
+    ldata.c1[3]=0xff;
+}
+
+f2=ldata.l1;
+
+if (FILTER_DC_REQUIRED){
+    f2=HPF_DC(f2);
+}
+
+if (FILTER_50_REQUIRED){
+    f2=NF_50(f2);
+}
+//
+if (FILTER_MVA_REQUIRED){
+    f2=MVAF(fFilterBuffer1,f2);
+}
+
+if (FILTER_MVA_REQUIRED){
+   //f2=MVAF(fFilterBuffer2,f2);
+}
+
+
+
+if (FILTER_05_REQUIRED){
+    f2=NF_05(f2);//for 5 hz frequcny
+}
+
+ldata.l1=f2;
+
+*pOutptr++=ldata.c1[2];
+*pOutptr++=ldata.c1[1];
+*pOutptr++=ldata.c1[0];
+}
+
+
+
+
+
+
+/*********************************************************************
+ * @fn      HPF_DC
+ *
+ * @brief   Applies HPF for and returns Value
+ *
+ * @return  none
+**********************************************************************/
+float HPF_DC(float fdVal)
+{
+float f1;
+
+dXn_dc=fdVal;
+
+
+f1= dXn2_dc - (A1_DC * dXn1_dc) + dXn_dc - (B2_DC * dYn2_dc) + (B1_DC * dYn1_dc);
+
+dXn2_dc=dXn1_dc;
+dXn1_dc=dXn_dc;
+
+dYn2_dc=dYn1_dc;
+dYn1_dc=f1;
+
+
+
+
+return f1;
+}
+
+
+
+
+/*********************************************************************
+ * @fn      HPF_DC
+ *
+ * @brief   Applies HPF for and returns Value
+ *
+ * @return  none
+**********************************************************************/
+
+
+
+
+/*********************************************************************
+ * @fn      NF_50(float fdVal)
+ *
+ * @brief   Applies HPF for 0.5Hz and returns Value
+ *
+ * @return  none
+**********************************************************************/
+float NF_50(float fdVal)
+{
+
+float f1;
+// factors for 50 NF
+
+dX0_50=fdVal;
+
+
+f1=( (A0_50*dX0_50) + (A1_50 * dX1_50) + (A2_50 * dX2_50)+(B1_50 * dY1_50)+(B2_50 * dY2_50));
+
+dX2_50=dX1_50;
+dX1_50=dX0_50;
+
+dY2_50=dY1_50;
+dY1_50=f1;
+
+
+return f1;
+}
+
+
+/*********************************************************************
+ * @fn      NF_50(float fdVal)
+ *
+ * @brief   Applies HPF for 0.5Hz and returns Value
+ *
+ * @return  none
+**********************************************************************/
+float NF_05(float fdVal)
+{
+
+float f1;
+// factors for 50 NF
+//for 5 hz
+
+dX0_05=fdVal;
+
+
+
+f1=( (A0_05*dX0_05) + (A1_05 * dX1_05) + (A2_05 * dX2_05)+(B1_05 * dY1_05)+(B2_05 * dY2_05));
+
+dX2_05=dX1_05;
+dX1_05=dX0_05;
+
+dY2_05=dY1_05;
+dY1_05=f1;
+
+
+return f1;
+}
+
+/*********************************************************************
+ * @fn      TransferFilteredData
+* @brief   Moving Average filter for 10 elements
+* @input: pointer to storage, current data
+ * @return  filtered data
+**********************************************************************/
+
+float MVAF(float *pfStorage,float finData)
+{
+int i,j,k;
+float f1, *ptr;
+
+ptr=pfStorage;
+
+i=*(ptr+10);
+if (i>=10) i=0;
+if (i<0) i=0;
+*(ptr+i)=finData;
+i++;
+
+*(ptr+10)=i;
+
+for (f1=0,i=0;i<10;i++){
+    f1=f1+*(pfStorage+i);
+}
+f1=f1/10.0;
+return f1;
+/////////////////////////////////////////////////////////////////
+
+}
+///////////////////////////////////////////////////////////////////////////////////////
+
+////////////////////////////// FOR CHANNEL ONE //////////////////////////////////////////////////
+/*********************************************************************
+ * @fn      HPF_DC
+ *
+ * @brief   Applies HPF for and returns Value
+ *
+ * @return  none
+**********************************************************************/
+float HPF_DC_1(float fdVal)
+{
+float f1;
+
+dXn_dc_1=fdVal;
+
+
+f1= dXn2_dc_1 - (A1_DC * dXn1_dc_1) + dXn_dc_1 - (B2_DC * dYn2_dc_1) + (B1_DC * dYn1_dc_1);
+
+dXn2_dc_1=dXn1_dc_1;
+dXn1_dc_1=dXn_dc_1;
+
+dYn2_dc_1=dYn1_dc_1;
+dYn1_dc_1=f1;
+
+return f1;
+}
+
+
+/*********************************************************************
+ * @fn      NF_50(float fdVal)
+ *
+ * @brief   Applies HPF for 0.5Hz and returns Value
+ *
+ * @return  none
+**********************************************************************/
+float NF_50_1(float fdVal)
+{
+
+float f1;
+// factors for 50 NF
+
+dX0_50_1=fdVal;
+
+
+f1=( (A0_50*dX0_50_1) + (A1_50 * dX1_50_1) + (A2_50 * dX2_50_1)+(B1_50 * dY1_50_1)+(B2_50 * dY2_50_1));
+
+dX2_50_1=dX1_50_1;
+dX1_50_1=dX0_50_1;
+
+dY2_50_1=dY1_50_1;
+dY1_50_1=f1;
+
+
+return f1;
+}
+
+
+/*********************************************************************
+ * @fn      NF_50(float fdVal)
+ *
+ * @brief   Applies HPF for 0.5Hz and returns Value
+ *
+ * @return  none
+**********************************************************************/
+float NF_05_1(float fdVal)
+{
+
+float f1;
+// factors for 50 NF
+//for 5 hz
+
+dX0_05_1=fdVal;
+
+
+
+f1=( (A0_05*dX0_05_1) + (A1_05 * dX1_05_1) + (A2_05 * dX2_05_1)+(B1_05 * dY1_05_1)+(B2_05 * dY2_05_1));
+
+dX2_05_1=dX1_05_1;
+dX1_05_1=dX0_05_1;
+
+dY2_05_1=dY1_05_1;
+dY1_05_1=f1;
+
+
+return f1;
+}
+
+/*********************************************************************
+ * @fn      TransferFilteredData
+* @brief   Moving Average filter for 10 elements
+* @input: pointer to storage, current data
+ * @return  filtered data
+**********************************************************************/
+
+float MVAF_1(float *pfStorage,float finData)
+{
+int i,j,k;
+float f1, *ptr;
+
+ptr=pfStorage;
+
+i=*(ptr+10);
+if (i>=10) i=0;
+if (i<0) i=0;
+*(ptr+i)=finData;
+i++;
+
+*(ptr+10)=i;
+
+for (f1=0,i=0;i<10;i++){
+    f1=f1+*(pfStorage+i);
+}
+f1=f1/10.0;
+return f1;
+/////////////////////////////////////////////////////////////////
+
+}
