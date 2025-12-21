@@ -1,0 +1,66 @@
+
+**** Build of configuration Release for project application ****
+
+"C:\\ti\\ccs1011\\ccs\\utils\\bin\\gmake" -k -j 4 all -O 
+ 
+making ../src/sysbios/rom_sysbios.aem4f ...
+Building file: "../project_zero_app.cfg"
+Invoking: XDCtools
+"C:/ti/ccs1011/xdctools_3_61_02_27_core/xs" --xdcpath="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source;C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/tirtos/packages;" xdc.tools.configuro -o configPkg -t ti.targets.arm.elf.M4F -p ti.platforms.simplelink:CC2642R1F -r release -c "C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS" --compileOptions "-mv7M4 --code_state=16 --float_support=FPv4SPD16 -me -O4 --opt_for_speed=0 --include_path=\"C:/tibackup/repos -Dma/application\" --include_path=\"C:/tibackup/repos -Dma/application/Release\" --include_path=\"C:/tibackup/repos -Dma/application/Application\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/common/cc26xx/\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/boards/CC26X2R1_LAUNCHXL/\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/drivers/nvs/\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/common/cc26xx/oad/\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/profiles/oad/cc26xx\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/tirtos/packages\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/controller/cc26xx/inc\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/inc\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/rom\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/common/cc26xx\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/icall/inc\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/hal/src/target/_common\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/hal/src/target/_common/cc26xx\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/hal/src/inc\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/heapmgr\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/profiles/dev_info\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/profiles/simple_profile\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/icall/src/inc\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/osal/src/inc\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/services/src/saddr\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/services/src/sdata\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/common/nv\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/common/cc26xx\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/devices/cc13x2_cc26x2\" --include_path=\"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs\" --include_path=\"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include\" --define=SECURITY --define=uartlog_FILE=\"\"\"\" --define=DeviceFamily_CC26X2 --define=FLASH_ROM_BUILD --define=NVOCMP_NWSAMEITEM=1 -g --c99 --gcc --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --abi=eabi  " "../project_zero_app.cfg"
+gmake[1]: Entering directory 'C:/tibackup/repos -Dma/application/src/sysbios'
+clem4f C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/tirtos/packages/ti/sysbios/BIOS.c ...
+gmake[1]: Leaving directory 'C:/tibackup/repos -Dma/application/src/sysbios'
+gmake[1]: Entering directory 'C:/tibackup/repos -Dma/application/src/sysbios'
+asmem4f C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/tirtos/packages/ti/sysbios/family/arm/m3/Hwi_asm.sv7M ...
+gmake[1]: Leaving directory 'C:/tibackup/repos -Dma/application/src/sysbios'
+gmake[1]: Entering directory 'C:/tibackup/repos -Dma/application/src/sysbios'
+asmem4f C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/tirtos/packages/ti/sysbios/family/arm/m3/Hwi_asm_switch.sv7M ...
+gmake[1]: Leaving directory 'C:/tibackup/repos -Dma/application/src/sysbios'
+gmake[1]: Entering directory 'C:/tibackup/repos -Dma/application/src/sysbios'
+asmem4f C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/tirtos/packages/ti/sysbios/family/arm/m3/IntrinsicsSupport_asm.sv7M ...
+gmake[1]: Leaving directory 'C:/tibackup/repos -Dma/application/src/sysbios'
+gmake[1]: Entering directory 'C:/tibackup/repos -Dma/application/src/sysbios'
+asmem4f C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/tirtos/packages/ti/sysbios/family/arm/m3/TaskSupport_asm.sv7M ...
+gmake[1]: Leaving directory 'C:/tibackup/repos -Dma/application/src/sysbios'
+gmake[1]: Entering directory 'C:/tibackup/repos -Dma/application/src/sysbios'
+arem4f rom_sysbios.obj m3_Hwi_asm.obj m3_Hwi_asm_switch.obj m3_IntrinsicsSupport_asm.obj m3_TaskSupport_asm.obj ...
+makefile:63: recipe for target 'rom_sysbios.aem4f' failed
+>> ERROR: no source files, nothing to do
+>> ERROR: no source files, nothing to do
+>> ERROR: no source files, nothing to do
+>> ERROR: no source files, nothing to do
+>> ERROR: no source files, nothing to do
+  -->  error: 'rom_sysbios.obj' not found
+  -->  error: 'm3_Hwi_asm.obj' not found
+  -->  error: 'm3_Hwi_asm_switch.obj' not found
+  -->  error: 'm3_IntrinsicsSupport_asm.obj' not found
+  -->  error: 'm3_TaskSupport_asm.obj' not found
+gmake[1]: *** [rom_sysbios.aem4f] Error 1
+gmake[1]: Leaving directory 'C:/tibackup/repos -Dma/application/src/sysbios'
+../src/makefile.libs:56: recipe for target '../src/sysbios/rom_sysbios.aem4f' failed
+gmake[1]: Target 'all' not remade because of errors.
+gmake: *** [../src/sysbios/rom_sysbios.aem4f] Error 2
+configuring project_zero_app.xem4f from package/cfg/project_zero_app_pem4f.cfg ...
+generating custom ROM library makefile ... 
+Starting build of library sources ...
+making C:/tibackup/REPOS-~2/application/src/sysbios/rom_sysbios.aem4f ...
+clem4f C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/tirtos/packages/ti/sysbios/BIOS.c ...
+Build of libraries failed.
+subdir_rules.mk:54: recipe for target 'build-1055094257-inproc' failed
+C:/Users/Alok/AppData/Local/Temp/make6560-3.sh: 2: C:/Users/Alok/AppData/Local/Temp/make6560-3.sh: Syntax error: Unterminated quoted string
+gmake[1]: *** [makefile:60: rom_sysbios.obj] Error 2
+gmake: *** [C:/tibackup/REPOS-~2/application/src/makefile.libs:57: C:/tibackup/REPOS-~2/application/src/sysbios/rom_sysbios.aem4f] Error 2
+error: xdc.cfg.SourceDir: "C:/ti/ccs1011/xdctools_3_61_02_27_core/packages/xdc/cfg/SourceDir.xs", line 209: xdc.cfg.SourceDir : Build of generated source libraries failed: exit status = 2:
+ 
+js: "C:/ti/ccs1011/xdctools_3_61_02_27_core/packages/xdc/cfg/Main.xs", line 160: Error: Configuration failed!
+xdctools_3_61_02_27_core\gmake.exe: *** [package.mak:202: package/cfg/project_zero_app_pem4f.xdl] Error 1
+xdctools_3_61_02_27_core\gmake.exe: *** Deleting file 'package/cfg/project_zero_app_pem4f.xdl'
+xdctools_3_61_02_27_core\gmake.exe: *** [package/cfg/project_zero_app_pem4f.xdl] Deleting file 'package/cfg/project_zero_app_pem4f.h'
+xdctools_3_61_02_27_core\gmake.exe: *** [package/cfg/project_zero_app_pem4f.xdl] Deleting file 'package/cfg/project_zero_app_pem4f.c'
+js: "C:/ti/ccs1011/xdctools_3_61_02_27_core/packages/xdc/tools/Cmdr.xs", line 52: Error: xdc.tools.configuro: configuration failed due to earlier errors (status = 2); 'linker.cmd' deleted.
+gmake[1]: *** [build-1055094257-inproc] Error 1
+gmake: *** [build-1055094257] Error 2
+subdir_rules.mk:51: recipe for target 'build-1055094257' failed
+gmake: Target 'all' not remade because of errors.
+
+**** Build Finished ****

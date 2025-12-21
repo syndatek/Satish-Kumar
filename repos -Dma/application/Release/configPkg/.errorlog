@@ -1,0 +1,10 @@
+C:/Users/Alok/AppData/Local/Temp/make6560-3.sh: 2: C:/Users/Alok/AppData/Local/Temp/make6560-3.sh: Syntax error: Unterminated quoted string
+gmake[1]: *** [makefile:60: rom_sysbios.obj] Error 2
+gmake: *** [C:/tibackup/REPOS-~2/application/src/makefile.libs:57: C:/tibackup/REPOS-~2/application/src/sysbios/rom_sysbios.aem4f] Error 2
+error: xdc.cfg.SourceDir: "C:/ti/ccs1011/xdctools_3_61_02_27_core/packages/xdc/cfg/SourceDir.xs", line 209: xdc.cfg.SourceDir : Build of generated source libraries failed: exit status = 2:
+
+js: "C:/ti/ccs1011/xdctools_3_61_02_27_core/packages/xdc/cfg/Main.xs", line 160: Error: Configuration failed!
+xdctools_3_61_02_27_core\gmake.exe: *** [package.mak:202: package/cfg/project_zero_app_pem4f.xdl] Error 1
+xdctools_3_61_02_27_core\gmake.exe: *** Deleting file 'package/cfg/project_zero_app_pem4f.xdl'
+xdctools_3_61_02_27_core\gmake.exe: *** [package/cfg/project_zero_app_pem4f.xdl] Deleting file 'package/cfg/project_zero_app_pem4f.h'
+xdctools_3_61_02_27_core\gmake.exe: *** [package/cfg/project_zero_app_pem4f.xdl] Deleting file 'package/cfg/project_zero_app_pem4f.c'
