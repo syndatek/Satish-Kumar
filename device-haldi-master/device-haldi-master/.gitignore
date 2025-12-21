@@ -1,0 +1,12 @@
+*/.settings/org.eclipse.core.resources.prefs
+*/FlashROM_Library/
+*/FlashROM_StackLibrary/
+*/TOOLS/src/
+.launches/
+.xdchelp
+/.jxbrowser-data/
+/.metadata/
+/RemoteSystemsTempFiles/
+Debug/
+Release/
+.vscode/
