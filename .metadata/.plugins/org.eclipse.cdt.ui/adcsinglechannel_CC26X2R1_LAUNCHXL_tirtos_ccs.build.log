@@ -1,0 +1,8 @@
+
+**** Build of configuration Debug for project adcsinglechannel_CC26X2R1_LAUNCHXL_tirtos_ccs ****
+
+"C:\\ti\\ccs1011\\ccs\\utils\\bin\\gmake" -k -j 4 all -O 
+ 
+gmake[1]: 'adcsinglechannel_CC26X2R1_LAUNCHXL_tirtos_ccs.out' is up to date.
+
+**** Build Finished ****
