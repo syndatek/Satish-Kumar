@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;simple_peripheral_oad_onchip_CC26X2R1_LAUNCHXL_tirtos_ccs&apos;" deleteContents="false" description="Delete resource &apos;simple_peripheral_oad_onchip_CC26X2R1_LAUNCHXL_tirtos_ccs&apos;" element1="/simple_peripheral_oad_onchip_CC26X2R1_LAUNCHXL_tirtos_ccs" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1615202306897"/>
+</session>

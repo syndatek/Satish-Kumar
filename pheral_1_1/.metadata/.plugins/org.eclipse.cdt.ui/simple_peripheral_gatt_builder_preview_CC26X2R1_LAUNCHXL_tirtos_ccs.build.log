@@ -1,0 +1,11 @@
+
+**** Build of configuration Release for project simple_peripheral_gatt_builder_preview_CC26X2R1_LAUNCHXL_tirtos_ccs ****
+
+"C:\\ti\\ccs1011\\ccs\\utils\\bin\\gmake" -k -j 4 all -O 
+ 
+making ../src/sysbios/rom_sysbios.aem4f ...
+gmake[1]: Nothing to be done for 'all'.
+making ../src/sysbios/rom_sysbios.aem4f ...
+gmake[2]: Nothing to be done for 'all'.
+
+**** Build Finished ****
