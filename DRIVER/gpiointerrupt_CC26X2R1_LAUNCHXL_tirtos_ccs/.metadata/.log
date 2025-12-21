@@ -1,0 +1,366 @@
+!SESSION 2021-04-20 10:43:23.507 -----------------------------------------------
+eclipse.buildId=4.14.0.I20191210-0610
+java.version=1.8.0_144
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_IN
+Framework arguments:  -product com.ti.ccstudio.branding.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product com.ti.ccstudio.branding.product
+
+!ENTRY com.ti.common.core 1 0 2021-04-20 10:44:09.087
+!MESSAGE path=ccs_base/DebugServer
+
+!ENTRY com.ti.common.core 1 0 2021-04-20 10:44:09.088
+!MESSAGE debugServerDir=C:/ti/ccs1011/ccs/ccs_base/DebugServer
+
+!ENTRY org.eclipse.equinox.event 4 0 2021-04-20 10:44:15.826
+!MESSAGE Exception while dispatching event org.osgi.service.event.Event [topic=org/eclipse/e4/ui/model/application/ApplicationElement/tags/ADD] {ChangedElement=org.eclipse.e4.primaryDataStack=org.eclipse.e4.ui.model.application.ui.basic.impl.PartStackImpl@6003eb60 (tags: [org.eclipse.e4.primaryDataStack, EditorStack, active, Maximized], contributorURI: null) (widget: CTabFolder {}, renderer: org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer@7be6dabb, toBeRendered: true, onTop: false, visible: true, containerData: null, accessibilityPhrase: null), org.eclipse.e4.data={ChangedElement=org.eclipse.e4.primaryDataStack=org.eclipse.e4.ui.model.application.ui.basic.impl.PartStackImpl@6003eb60 (tags: [org.eclipse.e4.primaryDataStack, EditorStack, active, Maximized], contributorURI: null) (widget: CTabFolder {}, renderer: org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer@7be6dabb, toBeRendered: true, onTop: false, visible: true, containerData: null, accessibilityPhrase: null), AttName=tags, EventType=ADD, Position=3, Widget=CTabFolder {}, NewValue=Maximized}, AttName=tags, EventType=ADD, Position=3, Widget=CTabFolder {}, NewValue=Maximized} to handler org.eclipse.e4.ui.internal.di.UIEventObjectSupplier$UIEventHandler@5f26fc4d
+!STACK 0
+org.eclipse.e4.core.di.InjectionException: java.lang.IllegalArgumentException: 
+	at org.eclipse.e4.core.internal.di.MethodRequestor.execute(MethodRequestor.java:68)
+	at org.eclipse.e4.ui.internal.di.UIEventObjectSupplier$UIEventHandler.lambda$0(UIEventObjectSupplier.java:64)
+	at org.eclipse.swt.widgets.Synchronizer.syncExec(Synchronizer.java:236)
+	at org.eclipse.ui.internal.UISynchronizer.syncExec(UISynchronizer.java:146)
+	at org.eclipse.swt.widgets.Display.syncExec(Display.java:4629)
+	at org.eclipse.e4.ui.internal.workbench.swt.E4Application$1.syncExec(E4Application.java:219)
+	at org.eclipse.e4.ui.internal.di.UIEventObjectSupplier$UIEventHandler.handleEvent(UIEventObjectSupplier.java:64)
+	at org.eclipse.equinox.internal.event.EventHandlerWrapper.handleEvent(EventHandlerWrapper.java:205)
+	at org.eclipse.equinox.internal.event.EventHandlerTracker.dispatchEvent(EventHandlerTracker.java:203)
+	at org.eclipse.equinox.internal.event.EventHandlerTracker.dispatchEvent(EventHandlerTracker.java:1)
+	at org.eclipse.osgi.framework.eventmgr.EventManager.dispatchEvent(EventManager.java:234)
+	at org.eclipse.osgi.framework.eventmgr.ListenerQueue.dispatchEventSynchronous(ListenerQueue.java:151)
+	at org.eclipse.equinox.internal.event.EventAdminImpl.dispatchEvent(EventAdminImpl.java:132)
+	at org.eclipse.equinox.internal.event.EventAdminImpl.sendEvent(EventAdminImpl.java:75)
+	at org.eclipse.equinox.internal.event.EventComponent.sendEvent(EventComponent.java:44)
+	at org.eclipse.e4.ui.services.internal.events.EventBroker.send(EventBroker.java:55)
+	at org.eclipse.e4.ui.internal.workbench.UIEventPublisher.notifyChanged(UIEventPublisher.java:63)
+	at org.eclipse.emf.common.notify.impl.BasicNotifierImpl.eNotify(BasicNotifierImpl.java:424)
+	at org.eclipse.emf.ecore.util.EcoreEList.dispatchNotification(EcoreEList.java:249)
+	at org.eclipse.emf.common.notify.impl.NotifyingListImpl.addUnique(NotifyingListImpl.java:304)
+	at org.eclipse.emf.common.util.AbstractEList.add(AbstractEList.java:304)
+	at org.eclipse.ui.internal.WorkbenchIntroManager.setIntroStandby(WorkbenchIntroManager.java:200)
+	at org.eclipse.ui.internal.WorkbenchIntroManager.showIntro(WorkbenchIntroManager.java:139)
+	at org.eclipse.ui.application.WorkbenchWindowAdvisor.openIntro(WorkbenchWindowAdvisor.java:188)
+	at org.eclipse.ui.internal.ide.application.IDEWorkbenchWindowAdvisor.openIntro(IDEWorkbenchWindowAdvisor.java:572)
+	at org.eclipse.ui.internal.WorkbenchWindow.setup(WorkbenchWindow.java:963)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.e4.core.internal.di.MethodRequestor.execute(MethodRequestor.java:58)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.processAnnotated(InjectorImpl.java:1002)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.internalInject(InjectorImpl.java:139)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.inject(InjectorImpl.java:95)
+	at org.eclipse.e4.core.contexts.ContextInjectionFactory.inject(ContextInjectionFactory.java:83)
+	at org.eclipse.ui.internal.Workbench.createWorkbenchWindow(Workbench.java:1505)
+	at org.eclipse.ui.internal.StandardTrim.createStatusLine(StandardTrim.java:119)
+	at org.eclipse.ui.internal.StandardTrim.createWidget(StandardTrim.java:48)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.e4.core.internal.di.MethodRequestor.execute(MethodRequestor.java:58)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.processAnnotated(InjectorImpl.java:1002)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.internalInject(InjectorImpl.java:139)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.internalMake(InjectorImpl.java:408)
+	at org.eclipse.e4.core.internal.di.InjectorImpl.make(InjectorImpl.java:345)
+	at org.eclipse.e4.core.contexts.ContextInjectionFactory.make(ContextInjectionFactory.java:227)
+	at org.eclipse.e4.ui.internal.workbench.ReflectionContributionFactory.createFromBundle(ReflectionContributionFactory.java:94)
+	at org.eclipse.e4.ui.internal.workbench.ReflectionContributionFactory.doCreate(ReflectionContributionFactory.java:60)
+	at org.eclipse.e4.ui.internal.workbench.ReflectionContributionFactory.create(ReflectionContributionFactory.java:37)
+	at org.eclipse.e4.ui.workbench.renderers.swt.ToolControlRenderer.createWidget(ToolControlRenderer.java:129)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createWidget(PartRenderingEngine.java:1002)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:662)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:768)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.access$0(PartRenderingEngine.java:739)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:733)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:717)
+	at org.eclipse.e4.ui.workbench.renderers.swt.SWTPartRenderer.processContents(SWTPartRenderer.java:72)
+	at org.eclipse.e4.ui.workbench.renderers.swt.TrimBarRenderer.processContents(TrimBarRenderer.java:134)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:676)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$1.run(PartRenderingEngine.java:547)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:531)
+	at org.eclipse.e4.ui.workbench.renderers.swt.WBWRenderer.processContents(WBWRenderer.java:687)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:676)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.safeCreateGui(PartRenderingEngine.java:768)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.access$0(PartRenderingEngine.java:739)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$2.run(PartRenderingEngine.java:733)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:45)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.createGui(PartRenderingEngine.java:717)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine$5.run(PartRenderingEngine.java:1086)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:338)
+	at org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.run(PartRenderingEngine.java:1049)
+	at org.eclipse.e4.ui.internal.workbench.E4Workbench.createAndRunUI(E4Workbench.java:155)
+	at org.eclipse.ui.internal.Workbench.lambda$3(Workbench.java:660)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:338)
+	at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:559)
+	at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:154)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:150)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:203)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:137)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:107)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:401)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:255)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:657)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:594)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1465)
+Caused by: java.lang.IllegalArgumentException: 
+	at org.eclipse.core.runtime.Assert.isLegal(Assert.java:66)
+	at org.eclipse.core.runtime.Assert.isLegal(Assert.java:50)
+	at org.eclipse.e4.ui.internal.workbench.ModelServiceImpl.findElementsRecursive(ModelServiceImpl.java:176)
+	at org.eclipse.e4.ui.internal.workbench.ModelServiceImpl.findElements(ModelServiceImpl.java:438)
+	at org.eclipse.e4.ui.internal.workbench.ModelServiceImpl.findElements(ModelServiceImpl.java:431)
+	at org.eclipse.e4.ui.workbench.addons.minmax.MinMaxAddon.findValidElementsToMinimize(MinMaxAddon.java:824)
+	at org.eclipse.e4.ui.workbench.addons.minmax.MinMaxAddon.getElementsToMinimize(MinMaxAddon.java:767)
+	at org.eclipse.e4.ui.workbench.addons.minmax.MinMaxAddon.maximize(MinMaxAddon.java:696)
+	at org.eclipse.e4.ui.workbench.addons.minmax.MinMaxAddon.subscribeTopicTagsChanged(MinMaxAddon.java:387)
+	at sun.reflect.GeneratedMethodAccessor11.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at org.eclipse.e4.core.internal.di.MethodRequestor.execute(MethodRequestor.java:58)
+	... 92 more
+
+!ENTRY com.ti.ccstudio.ui 1 0 2021-04-20 10:44:21.980
+!MESSAGE CCS IDE session started!
+	CCS build: 10.1.1.00004
+	CCS location: C:/ti/ccs1011/ccs
+	Workspace location: C:/tibackup/DRIVER/gpiointerrupt_CC26X2R1_LAUNCHXL_tirtos_ccs
+
+!ENTRY com.ti.ccstudio.debug.server 4 214294189 2021-04-20 10:44:22.334
+!MESSAGE Unexpected CCS exit detected [16/4/21 4:42 PM]!!!
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-04-20 10:44:22.438
+!MESSAGE constructor
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-04-20 10:44:22.439
+!MESSAGE done with directories
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-04-20 10:44:22.440
+!MESSAGE loading ti_logger
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-04-20 10:44:22.443
+!MESSAGE Platform os: win32
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-04-20 10:44:22.444
+!MESSAGE loading cToolsIF
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-04-20 10:44:22.449
+!MESSAGE loading cTools
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-04-20 10:44:22.454
+!MESSAGE loading TraceFactory
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-04-20 10:44:22.459
+!MESSAGE loading sqlite3
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-04-20 10:44:22.464
+!MESSAGE loading CloudTrace
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-04-20 10:44:22.487
+!MESSAGE CloudTrace interface loaded
+
+!ENTRY com.ti.ccstudio.project.ui.webcontent 1 0 2021-04-20 10:44:22.656
+!MESSAGE CCS HTTP adapter started! [ccs.port:53316] - Open 'http://localhost:53316/ide' in web browser to see listing of available APIs...
+
+!ENTRY com.ti.ccstudio.webcontent 4 0 2021-04-20 10:44:42.814
+!MESSAGE Module Closed
+!STACK 0
+org.json.JSONException: Module Closed
+	at com.ti.cloudagent.communication.Socket$WebSocket.<init>(Socket.java:58)
+	at com.ti.cloudagent.communication.Socket.<init>(Socket.java:146)
+	at com.ti.cloudagent.communication.JSONInterface.<init>(JSONInterface.java:24)
+	at com.ti.cloudagent.Agent.<init>(Agent.java:149)
+	at com.ti.cloudagent.Agent.instance(Agent.java:50)
+	at com.ti.ccstudio.webcontent.cloudagent.CloudAgent.getAgent(CloudAgent.java:33)
+	at com.ti.ccstudio.webcontent.cloudagent.CloudAgent.<init>(CloudAgent.java:22)
+	at com.ti.ccstudio.webcontent.cloudagent.CloudAgent.<clinit>(CloudAgent.java:18)
+	at com.ti.ccstudio.webcontent.internal.ABrowserExtension.init(ABrowserExtension.java:29)
+	at com.ti.ccstudio.webcontent.cloudagent.CloudAgentBrowserExtension.init(CloudAgentBrowserExtension.java:24)
+	at com.ti.ccstudio.webcontent.internal.CommonBrowserExtensionContributor.init(CommonBrowserExtensionContributor.java:29)
+	at com.ti.browser.internal.TIBrowser$1.run(TIBrowser.java:100)
+	at com.ti.chromium.browser.JxBrowser$4.onScriptContextCreated(JxBrowser.java:351)
+	at com.teamdev.jxbrowser.chromium.Browser$d.b(SourceFile:3647)
+	at com.teamdev.jxbrowser.chromium.Browser$d.onMessageReceived(SourceFile:5616)
+	at com.teamdev.jxbrowser.chromium.internal.ipc.q.a(SourceFile:1084)
+	at com.teamdev.jxbrowser.chromium.internal.ipc.r.run(SourceFile:68)
+	at com.teamdev.jxbrowser.chromium.internal.r.run(SourceFile:79)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)
+	at java.util.concurrent.FutureTask.run(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.lang.Thread.run(Unknown Source)
+!SESSION 2021-04-20 10:46:13.088 -----------------------------------------------
+eclipse.buildId=4.14.0.I20191210-0610
+java.version=1.8.0_144
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_IN
+Framework arguments:  -product com.ti.ccstudio.branding.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product com.ti.ccstudio.branding.product
+
+!ENTRY com.ti.common.core 1 0 2021-04-20 10:46:29.483
+!MESSAGE path=ccs_base/DebugServer
+
+!ENTRY com.ti.common.core 1 0 2021-04-20 10:46:29.486
+!MESSAGE debugServerDir=C:/ti/ccs1011/ccs/ccs_base/DebugServer
+
+!ENTRY com.ti.ccstudio.ui 1 0 2021-04-20 10:46:44.203
+!MESSAGE CCS IDE session started!
+	CCS build: 10.1.1.00004
+	CCS location: C:/ti/ccs1011/ccs
+	Workspace location: C:/tibackup/DRIVER/gpiointerrupt_CC26X2R1_LAUNCHXL_tirtos_ccs
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-04-20 10:46:44.507
+!MESSAGE constructor
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-04-20 10:46:44.509
+!MESSAGE done with directories
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-04-20 10:46:44.510
+!MESSAGE loading ti_logger
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-04-20 10:46:44.514
+!MESSAGE Platform os: win32
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-04-20 10:46:44.521
+!MESSAGE loading cToolsIF
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-04-20 10:46:44.525
+!MESSAGE loading cTools
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-04-20 10:46:44.528
+!MESSAGE loading TraceFactory
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-04-20 10:46:44.531
+!MESSAGE loading sqlite3
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-04-20 10:46:44.533
+!MESSAGE loading CloudTrace
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-04-20 10:46:44.543
+!MESSAGE CloudTrace interface loaded
+
+!ENTRY com.ti.ccstudio.project.ui.webcontent 1 0 2021-04-20 10:46:44.664
+!MESSAGE CCS HTTP adapter started! [ccs.port:53387] - Open 'http://localhost:53387/ide' in web browser to see listing of available APIs...
+
+!ENTRY com.ti.common.project.core 4 0 2021-04-20 10:53:38.027
+!MESSAGE Could not read file: C:\tibackup\DRIVER\gpiointerrupt_CC26X2R1_LAUNCHXL_tirtos_ccs\.jxbrowser-data\Cache\data_0.
+!STACK 1
+org.eclipse.core.runtime.CoreException: Could not read file: C:\tibackup\DRIVER\gpiointerrupt_CC26X2R1_LAUNCHXL_tirtos_ccs\.jxbrowser-data\Cache\data_0.
+	at org.eclipse.core.internal.filesystem.Policy.error(Policy.java:48)
+	at org.eclipse.core.internal.filesystem.local.LocalFile.openInputStream(LocalFile.java:415)
+	at org.eclipse.core.filesystem.provider.FileStore.copyFile(FileStore.java:200)
+	at org.eclipse.core.filesystem.provider.FileStore.copy(FileStore.java:131)
+	at org.eclipse.core.internal.filesystem.local.LocalFile.copy(LocalFile.java:127)
+	at org.eclipse.core.filesystem.provider.FileStore.copyDirectory(FileStore.java:169)
+	at org.eclipse.core.filesystem.provider.FileStore.copy(FileStore.java:129)
+	at org.eclipse.core.internal.filesystem.local.LocalFile.copy(LocalFile.java:127)
+	at org.eclipse.core.filesystem.provider.FileStore.copyDirectory(FileStore.java:169)
+	at org.eclipse.core.filesystem.provider.FileStore.copy(FileStore.java:129)
+	at org.eclipse.core.internal.filesystem.local.LocalFile.copy(LocalFile.java:127)
+	at org.eclipse.core.filesystem.provider.FileStore.copyDirectory(FileStore.java:169)
+	at org.eclipse.core.filesystem.provider.FileStore.copy(FileStore.java:129)
+	at org.eclipse.core.internal.filesystem.local.LocalFile.copy(LocalFile.java:127)
+	at com.ti.ccstudio.project.core.services.ProjectImporter.internalImportProject(ProjectImporter.java:447)
+	at com.ti.ccstudio.project.core.services.ProjectImporter.access$1(ProjectImporter.java:415)
+	at com.ti.ccstudio.project.core.services.ProjectImporter$1.run(ProjectImporter.java:377)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2292)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2317)
+	at com.ti.ccstudio.project.core.services.ProjectImporter.importProject(ProjectImporter.java:375)
+	at com.ti.ccstudio.project.ui.internal.wizards.importexport.ProjectImportPage.createExistingProject(ProjectImportPage.java:1373)
+	at com.ti.ccstudio.project.ui.internal.wizards.importexport.ProjectImportPage.access$27(ProjectImportPage.java:1211)
+	at com.ti.ccstudio.project.ui.internal.wizards.importexport.ProjectImportPage$16.execute(ProjectImportPage.java:1161)
+	at org.eclipse.ui.actions.WorkspaceModifyOperation.lambda$0(WorkspaceModifyOperation.java:110)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2292)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2317)
+	at org.eclipse.ui.actions.WorkspaceModifyOperation.run(WorkspaceModifyOperation.java:131)
+	at org.eclipse.jface.operation.ModalContext$ModalContextThread.run(ModalContext.java:122)
+Caused by: java.io.FileNotFoundException: C:\tibackup\DRIVER\gpiointerrupt_CC26X2R1_LAUNCHXL_tirtos_ccs\.jxbrowser-data\Cache\data_0 (The process cannot access the file because it is being used by another process)
+	at java.io.FileInputStream.open0(Native Method)
+	at java.io.FileInputStream.open(Unknown Source)
+	at java.io.FileInputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.filesystem.local.LocalFile.openInputStream(LocalFile.java:404)
+	... 26 more
+!SUBENTRY 1 org.eclipse.core.filesystem 4 271 2021-04-20 10:53:38.029
+!MESSAGE Could not read file: C:\tibackup\DRIVER\gpiointerrupt_CC26X2R1_LAUNCHXL_tirtos_ccs\.jxbrowser-data\Cache\data_0.
+!STACK 0
+java.io.FileNotFoundException: C:\tibackup\DRIVER\gpiointerrupt_CC26X2R1_LAUNCHXL_tirtos_ccs\.jxbrowser-data\Cache\data_0 (The process cannot access the file because it is being used by another process)
+	at java.io.FileInputStream.open0(Native Method)
+	at java.io.FileInputStream.open(Unknown Source)
+	at java.io.FileInputStream.<init>(Unknown Source)
+	at org.eclipse.core.internal.filesystem.local.LocalFile.openInputStream(LocalFile.java:404)
+	at org.eclipse.core.filesystem.provider.FileStore.copyFile(FileStore.java:200)
+	at org.eclipse.core.filesystem.provider.FileStore.copy(FileStore.java:131)
+	at org.eclipse.core.internal.filesystem.local.LocalFile.copy(LocalFile.java:127)
+	at org.eclipse.core.filesystem.provider.FileStore.copyDirectory(FileStore.java:169)
+	at org.eclipse.core.filesystem.provider.FileStore.copy(FileStore.java:129)
+	at org.eclipse.core.internal.filesystem.local.LocalFile.copy(LocalFile.java:127)
+	at org.eclipse.core.filesystem.provider.FileStore.copyDirectory(FileStore.java:169)
+	at org.eclipse.core.filesystem.provider.FileStore.copy(FileStore.java:129)
+	at org.eclipse.core.internal.filesystem.local.LocalFile.copy(LocalFile.java:127)
+	at org.eclipse.core.filesystem.provider.FileStore.copyDirectory(FileStore.java:169)
+	at org.eclipse.core.filesystem.provider.FileStore.copy(FileStore.java:129)
+	at org.eclipse.core.internal.filesystem.local.LocalFile.copy(LocalFile.java:127)
+	at com.ti.ccstudio.project.core.services.ProjectImporter.internalImportProject(ProjectImporter.java:447)
+	at com.ti.ccstudio.project.core.services.ProjectImporter.access$1(ProjectImporter.java:415)
+	at com.ti.ccstudio.project.core.services.ProjectImporter$1.run(ProjectImporter.java:377)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2292)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2317)
+	at com.ti.ccstudio.project.core.services.ProjectImporter.importProject(ProjectImporter.java:375)
+	at com.ti.ccstudio.project.ui.internal.wizards.importexport.ProjectImportPage.createExistingProject(ProjectImportPage.java:1373)
+	at com.ti.ccstudio.project.ui.internal.wizards.importexport.ProjectImportPage.access$27(ProjectImportPage.java:1211)
+	at com.ti.ccstudio.project.ui.internal.wizards.importexport.ProjectImportPage$16.execute(ProjectImportPage.java:1161)
+	at org.eclipse.ui.actions.WorkspaceModifyOperation.lambda$0(WorkspaceModifyOperation.java:110)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2292)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:2317)
+	at org.eclipse.ui.actions.WorkspaceModifyOperation.run(WorkspaceModifyOperation.java:131)
+	at org.eclipse.jface.operation.ModalContext$ModalContextThread.run(ModalContext.java:122)
+
+!ENTRY org.eclipse.cdt.core 1 0 2021-04-20 10:57:21.385
+!MESSAGE Indexed 'freertos_builds_cc13x2_cc26x2_release_ccs' (27 sources, 93 headers) in 6.9 sec: 3,694 declarations; 8,490 references; 63 unresolved inclusions; 7 syntax errors; 466 unresolved names (3.7%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2021-04-20 10:57:21.789
+!MESSAGE Indexed 'gpiointerrupt_CC26X2R1_LAUNCHXL_freertos_ccs' (2 sources, 28 headers) in 0.399 sec: 739 declarations; 1,099 references; 3 unresolved inclusions; 0 syntax errors; 24 unresolved names (1.3%)
+
+!ENTRY org.eclipse.core.jobs 4 2 2021-04-20 11:12:44.721
+!MESSAGE An internal error occurred during: "Searching for local changes".
+!STACK 0
+java.lang.NullPointerException
+	at com.ti.common.project.core.util.CTIProjectCoreUtils.getToolChainPropertyProvider(CTIProjectCoreUtils.java:543)
+	at com.ti.common.project.core.util.CTIProjectCoreUtils.getLinkerTool(CTIProjectCoreUtils.java:582)
+	at com.ti.ccstudio.project.core.internal.options.OutputFileOptionValueHandler.handleValue(OutputFileOptionValueHandler.java:49)
+	at org.eclipse.cdt.managedbuilder.core.ManagedBuildManager.performValueHandlerEvent(ManagedBuildManager.java:3214)
+	at org.eclipse.cdt.managedbuilder.core.ManagedBuildManager.performValueHandlerEvent(ManagedBuildManager.java:3170)
+	at org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider.load(ConfigurationDataProvider.java:407)
+	at org.eclipse.cdt.managedbuilder.internal.dataprovider.ConfigurationDataProvider.loadConfiguration(ConfigurationDataProvider.java:574)
+	at org.eclipse.cdt.internal.core.settings.model.CConfigurationDescriptionCache.loadData(CConfigurationDescriptionCache.java:139)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescription.loadDatas(CProjectDescription.java:199)
+	at org.eclipse.cdt.internal.core.settings.model.xml.XmlProjectDescriptionStorage.loadProjectDescription(XmlProjectDescriptionStorage.java:512)
+	at org.eclipse.cdt.internal.core.settings.model.xml.XmlProjectDescriptionStorage.getProjectDescription(XmlProjectDescriptionStorage.java:240)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.getProjectDescriptionInternal(CProjectDescriptionManager.java:426)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.getProjectDescription(CProjectDescriptionManager.java:408)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.getProjectDescription(CProjectDescriptionManager.java:402)
+	at org.eclipse.cdt.internal.core.settings.model.CProjectDescriptionManager.getProjectDescription(CProjectDescriptionManager.java:395)
+	at org.eclipse.cdt.core.model.CoreModel.getProjectDescription(CoreModel.java:1436)
+	at org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo.findExistingDefaultConfiguration(ManagedBuildInfo.java:272)
+	at org.eclipse.cdt.managedbuilder.internal.core.ManagedBuildInfo.getDefaultConfiguration(ManagedBuildInfo.java:258)
+	at com.ti.common.project.core.util.CTIProjectCoreUtils.getActiveBuildConfiguration(CTIProjectCoreUtils.java:476)
+	at com.ti.common.project.core.variables.ProductPathVariableResolver.doGetValue(ProductPathVariableResolver.java:82)
+	at com.ti.common.project.core.variables.APathVariableResolver.getValue(APathVariableResolver.java:76)
+	at org.eclipse.core.internal.resources.ProjectVariableProviderManager$Descriptor.getValue(ProjectVariableProviderManager.java:65)
+	at org.eclipse.core.internal.resources.ProjectPathVariableManager.internalGetValue(ProjectPathVariableManager.java:160)
+	at org.eclipse.core.internal.resources.ProjectPathVariableManager.resolveVariable(ProjectPathVariableManager.java:233)
+	at org.eclipse.core.internal.resources.ProjectPathVariableManager.resolveVariable(ProjectPathVariableManager.java:218)
+	at org.eclipse.core.internal.resources.ProjectPathVariableManager.resolveURI(ProjectPathVariableManager.java:291)
+	at org.eclipse.core.internal.localstore.FileStoreRoot.createStore(FileStoreRoot.java:128)
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.getStore(FileSystemResourceManager.java:534)
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.fastIsSynchronized(FileSystemResourceManager.java:455)
+	at org.eclipse.core.internal.localstore.FileSystemResourceManager.isSynchronized(FileSystemResourceManager.java:729)
+	at org.eclipse.core.internal.resources.Resource.isSynchronized(Resource.java:1416)
+	at org.eclipse.core.internal.refresh.PollingMonitor.poll(PollingMonitor.java:180)
+	at org.eclipse.core.internal.refresh.PollingMonitor.run(PollingMonitor.java:139)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
