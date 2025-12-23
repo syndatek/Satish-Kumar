@@ -1,0 +1,14 @@
+"C:\Users\Alok\AppData\Local\Temp\{9E1A470A-E577-4B7F-A870-A43AE7C2DBBA}", ERROR!  :
+ [E1000]
+         Unable to open temp macro library
+           'C:\Users\Alok\AppData\Local\Temp\{1F526A82-4793-4CA5-B123-1F38E71C02FA}':
+           Permission denied
+gmake[1]: *** [makefile:60: rom_sysbios.obj] Error 1
+gmake: *** [C:/tibackup/SydantekVer4.1_Workspace1p2-watchdog/application/src/makefile.libs:57: C:/tibackup/SydantekVer4.1_Workspace1p2-watchdog/application/src/sysbios/rom_sysbios.aem4f] Error 2
+error: xdc.cfg.SourceDir: "C:/ti/ccs1011/xdctools_3_61_02_27_core/packages/xdc/cfg/SourceDir.xs", line 209: xdc.cfg.SourceDir : Build of generated source libraries failed: exit status = 2:
+
+js: "C:/ti/ccs1011/xdctools_3_61_02_27_core/packages/xdc/cfg/Main.xs", line 160: Error: Configuration failed!
+gmake.exe: *** [package.mak:202: package/cfg/project_zero_app_pem4f.xdl] Error 1
+gmake.exe: *** Deleting file 'package/cfg/project_zero_app_pem4f.xdl'
+gmake.exe: *** [package/cfg/project_zero_app_pem4f.xdl] Deleting file 'package/cfg/project_zero_app_pem4f.h'
+gmake.exe: *** [package/cfg/project_zero_app_pem4f.xdl] Deleting file 'package/cfg/project_zero_app_pem4f.c'
