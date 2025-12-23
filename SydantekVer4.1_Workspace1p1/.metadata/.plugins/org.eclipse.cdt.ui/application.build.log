@@ -1,0 +1,166 @@
+
+**** Build of configuration Release for project application ****
+
+"C:\\ti\\ccs1011\\ccs\\utils\\bin\\gmake" -k -j 4 all -O 
+ 
+making ../src/sysbios/rom_sysbios.aem4f ...
+gmake[1]: Nothing to be done for 'all'.
+Building file: "../Application/services/sydantek.c"
+Invoking: ARM Compiler
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" --cmd_file="C:/tibackup/SydantekVer4.1_Workspace1p1/application/Release/syscfg/ti_ble_app_config.opt" --cmd_file="C:/tibackup/SydantekVer4.1_Workspace1p1/application/Release/syscfg/ti_build_config.opt" --cmd_file="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/config/build_components.opt" --cmd_file="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/config/factory_config.opt"  -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me -Ooff --opt_for_speed=4 --include_path="C:/tibackup/SydantekVer4.1_Workspace1p1/application" --include_path="C:/tibackup/SydantekVer4.1_Workspace1p1/application/Release" --include_path="C:/tibackup/SydantekVer4.1_Workspace1p1/application/Application" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/common/cc26xx/" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/boards/CC26X2R1_LAUNCHXL/" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/drivers/nvs/" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/common/cc26xx/oad/" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/profiles/oad/cc26xx" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/tirtos/packages" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/controller/cc26xx/inc" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/inc" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/rom" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/common/cc26xx" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/icall/inc" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/hal/src/target/_common" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/hal/src/target/_common/cc26xx" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/hal/src/inc" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/heapmgr" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/profiles/dev_info" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/profiles/simple_profile" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/icall/src/inc" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/osal/src/inc" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/services/src/saddr" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/services/src/sdata" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/common/nv" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/common/cc26xx" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/devices/cc13x2_cc26x2" --include_path="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/posix/ccs" --include_path="C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/include" --define=SECURITY --define=uartlog_FILE="\"sydantek.c\"" --define=DeviceFamily_CC26X2 --define=FLASH_ROM_BUILD --define=NVOCMP_NWSAMEITEM=1 -g --c99 --gcc --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --abi=eabi --preproc_with_compile --preproc_dependency="Application/services/sydantek.d_raw" --include_path="C:/tibackup/SydantekVer4.1_Workspace1p1/application/Release/syscfg" --obj_directory="Application/services" --cmd_file="syscfg/ti_build_config.opt" --cmd_file="syscfg/ti_ble_app_config.opt" --cmd_file="configPkg/compiler.opt"  "../Application/services/sydantek.c"
+"../Application/services/sydantek.c", line 738: warning #552-D: variable "k" was set but never used
+"../Application/services/sydantek.c", line 827: warning #552-D: variable "cTempRx" was set but never used
+"../Application/services/sydantek.c", line 866: warning #179-D: variable "ptr" was declared but never referenced
+"../Application/services/sydantek.c", line 867: warning #179-D: variable "k" was declared but never referenced
+"../Application/services/sydantek.c", line 868: warning #179-D: variable "ch" was declared but never referenced
+"../Application/services/sydantek.c", line 927: warning #515-D: a value of type "uint8_t *" cannot be assigned to an entity of type "uint8_t"
+"../Application/services/sydantek.c", line 929: warning #515-D: a value of type "uint8_t" cannot be assigned to an entity of type "void *"
+"../Application/services/sydantek.c", line 911: warning #552-D: variable "cTempRx" was set but never used
+"../Application/services/sydantek.c", line 960: warning #179-D: variable "j" was declared but never referenced
+"../Application/services/sydantek.c", line 960: warning #179-D: variable "ch" was declared but never referenced
+"../Application/services/sydantek.c", line 1477: warning #179-D: variable "k" was declared but never referenced
+"../Application/services/sydantek.c", line 1507: warning #552-D: variable "statusbreakpoint" was set but never used
+"../Application/services/sydantek.c", line 1531: warning #179-D: variable "uGettime" was declared but never referenced
+"../Application/services/sydantek.c", line 339: warning #179-D: variable "syncEvent" was declared but never referenced
+Finished building: "../Application/services/sydantek.c"
+ 
+making ../src/sysbios/rom_sysbios.aem4f ...
+gmake[2]: Nothing to be done for 'all'.
+Building target: "application.out"
+Invoking: ARM Linker
+"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armcl" --cmd_file="C:/tibackup/SydantekVer4.1_Workspace1p1/application/Release/syscfg/ti_ble_app_config.opt" --cmd_file="C:/tibackup/SydantekVer4.1_Workspace1p1/application/Release/syscfg/ti_build_config.opt" --cmd_file="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/config/build_components.opt" --cmd_file="C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source/ti/ble5stack/config/factory_config.opt"  -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me -Ooff --opt_for_speed=4 --define=SECURITY --define=uartlog_FILE="\"\"" --define=DeviceFamily_CC26X2 --define=FLASH_ROM_BUILD --define=NVOCMP_NWSAMEITEM=1 -g --c99 --gcc --diag_warning=225 --diag_warning=255 --diag_wrap=off --display_error_number --gen_func_subsections=on --abi=eabi -z -m"application.map" -i"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/source" -i"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/kernel/tirtos/packages" -i"C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/lib" --reread_libs --define=FLASH_ROM_BUILD=2 --define=OAD_IMG_E=1 --define=SECURITY --diag_suppress=16002-D --diag_suppress=10247-D --diag_suppress=10325-D --diag_suppress=10229-D --diag_suppress=16032-D --diag_wrap=off --display_error_number --warn_sections --xml_link_info="application_linkInfo.xml" --rom_model -o "application.out" "./syscfg/ti_ble_config.obj" "./syscfg/ti_radio_config.obj" "./syscfg/ti_drivers_config.obj" "./Application/haldi.obj" "./Application/util.obj" "./Application/services/sydantek.obj" "./Drivers/NV/crc.obj" "./Drivers/NV/nvocmp.obj" "./OAD/crc32.obj" "./OAD/flash_interface_ext_rtos_NVS.obj" "./OAD/oad.obj" "./OAD/oad_image_header_app.obj" "./Profiles/button_service.obj" "./Profiles/data_service.obj" "./Profiles/devinfoservice.obj" "./Profiles/gatt_uuid.obj" "./Profiles/gattservapp_util.obj" "./Profiles/led_service.obj" "./Startup/UartLog.obj" "./Startup/ble_user_config_stack.obj" "./Startup/main.obj" "./Startup/osal_icall_ble.obj" "./Startup/rom_init.obj" "./iCall/icall.obj" "./iCall/icall_cc2650.obj" "./iCall/icall_user_config.obj" "./iCallBLE/ble_user_config.obj" "./iCallBLE/icall_api_lite.obj" -l"configPkg/linker.cmd"  -l"C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/examples/rtos/CC26X2R1_LAUNCHXL/ble5stack/project_zero/tirtos/ccs/cc13x2_cc26x2_app.cmd" -l"C:/tibackup/SydantekVer4.1_Workspace1p1/application/Release/syscfg/ti_utils_build_linker.cmd.genlibs" -l"ti/devices/cc13x2_cc26x2/driverlib/bin/ccs/driverlib.lib" -llibc.a 
+<Linking>
+Finished building target: "application.out"
+ 
+C:/ti/ccs1011/ccs/tools/compiler/ti-cgt-arm_20.2.1.LTS/bin/armhex -order MS --memwidth=8 --romwidth=8 --intel -o application.hex application.out
+Translating to Intel format...
+   "application.out" .image_header ==> .image_header
+   "application.out" .resetVecs ==> .resetVecs
+   "application.out" .text.1 ==> .text.1
+   "application.out" .const.1 ==> .const.1
+   "application.out" .text.2 ==> .text.2
+   "application.out" .const.2 ==> .const.2
+   "application.out" .text.3 ==> .text.3
+   "application.out" .const.3 ==> .const.3
+   "application.out" .text.4 ==> .text.4
+   "application.out" .const.4 ==> .const.4
+   "application.out" .text.5 ==> .text.5
+   "application.out" .const.5 ==> .const.5
+   "application.out" .text.6 ==> .text.6
+   "application.out" .const.6 ==> .const.6
+   "application.out" .text.7 ==> .text.7
+   "application.out" .const.7 ==> .const.7
+   "application.out" .text.8 ==> .text.8
+   "application.out" .const.8 ==> .const.8
+   "application.out" .text.9 ==> .text.9
+   "application.out" .const.9 ==> .const.9
+   "application.out" .text.10 ==> .text.10
+   "application.out" .const.10 ==> .const.10
+   "application.out" .text.11 ==> .text.11
+   "application.out" .const.11 ==> .const.11
+   "application.out" .text.12 ==> .text.12
+   "application.out" .const.12 ==> .const.12
+   "application.out" .text.13 ==> .text.13
+   "application.out" .const.13 ==> .const.13
+   "application.out" .text.14 ==> .text.14
+   "application.out" .const.14 ==> .const.14
+   "application.out" .text.15 ==> .text.15
+   "application.out" .const.15 ==> .const.15
+   "application.out" .text.16 ==> .text.16
+   "application.out" .const.16 ==> .const.16
+   "application.out" .text.17 ==> .text.17
+   "application.out" .const.17 ==> .const.17
+   "application.out" .text.18 ==> .text.18
+   "application.out" .const.18 ==> .const.18
+   "application.out" .text.19 ==> .text.19
+   "application.out" .const.19 ==> .const.19
+   "application.out" .text.20 ==> .text.20
+   "application.out" .const.20 ==> .const.20
+   "application.out" .text.21 ==> .text.21
+   "application.out" .const.21 ==> .const.21
+   "application.out" .text.22 ==> .text.22
+   "application.out" .const.22 ==> .const.22
+   "application.out" .text.23 ==> .text.23
+   "application.out" .const.23 ==> .const.23
+   "application.out" .text.24 ==> .text.24
+   "application.out" .const.24 ==> .const.24
+   "application.out" .text.25 ==> .text.25
+   "application.out" .const.25 ==> .const.25
+   "application.out" .text.26 ==> .text.26
+   "application.out" .const.26 ==> .const.26
+   "application.out" .text.27 ==> .text.27
+   "application.out" .const.27 ==> .const.27
+   "application.out" .text.28 ==> .text.28
+   "application.out" .const.28 ==> .const.28
+   "application.out" .text.29 ==> .text.29
+   "application.out" .const.29 ==> .const.29
+   "application.out" .text.30 ==> .text.30
+   "application.out" .const.30 ==> .const.30
+   "application.out" .text.31 ==> .text.31
+   "application.out" .rodata.1 ==> .rodata.1
+   "application.out" .text.32 ==> .text.32
+   "application.out" .rodata.2 ==> .rodata.2
+   "application.out" .text.33 ==> .text.33
+   "application.out" .rodata.3 ==> .rodata.3
+   "application.out" .text.34 ==> .text.34
+   "application.out" .rodata.4 ==> .rodata.4
+   "application.out" .text.35 ==> .text.35
+   "application.out" .rodata.5 ==> .rodata.5
+   "application.out" .text.36 ==> .text.36
+   "application.out" .rodata.6 ==> .rodata.6
+   "application.out" .text.37 ==> .text.37
+   "application.out" .rodata.7 ==> .rodata.7
+   "application.out" .text.38 ==> .text.38
+   "application.out" .rodata.8 ==> .rodata.8
+   "application.out" .text.39 ==> .text.39
+   "application.out" .const.31 ==> .const.31
+   "application.out" .rodata.9 ==> .rodata.9
+   "application.out" .cinit ==> .cinit
+C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/tools/common/oad/oad_image_tool --verbose ccs C:/tibackup/SydantekVer4.1_Workspace1p1/application 7 -hex1 Release/application.hex -k C:/ti/simplelink_cc13x2_26x2_sdk_4_30_00_54/tools/common/oad/private.pem -o Release/application_oad
+ 
+____________________________
+       OAD IMG HDR
+____________________________
+Field       |    Value
+imgID       |    b'CC26x2R1'
+CRC         |    0x1543121C
+bimVer      |    3
+metaVer     |    1
+techType    |    0xFFFE
+imgCpStat   |    0xFF
+crcStat     |    0xFF
+imgType     |    0x7
+imgNo       |    0x0
+imgVld      |    0xFFFFFFFF
+len         |    0x1E37C
+prgEntry    |    0x90
+softVer     |    0x31303030
+imgEndAddr  |    0x1E37B
+hdrLen      |    0x2C
+ 
+ 
+____________________________
+       Segment HDR
+____________________________
+Field            |      Value
+Segment Type     |      Security Segment
+Wireless Tech    |      [BLE]
+Segment Length   |      0x55
+Security Version |      0x1
+Timestamp        |      0x5FEB377D
+Signer Info      |      0x8B10EC1D517D17B0
+Signature        |      0xEC93296600844D2512755B6586589C3FFD82D91310BE3BA7BD293CA8849740A7FA06251FBDB389C3F3E913109144BA328BE1152A217ECFD440DCFD3A314023F7
+ 
+ 
+____________________________
+        Segment HDR
+____________________________
+Field            |      Value
+Segment Type     |      Contiguous Image Segment
+Wireless Tech    |      [BLE]
+Segment Length   |      0x1E2FB
+Start Address    |      0x0
+ 
+ 
+
+**** Build Finished ****
