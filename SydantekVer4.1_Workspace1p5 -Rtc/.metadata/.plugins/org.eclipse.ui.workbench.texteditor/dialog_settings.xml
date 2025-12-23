@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item key="selection" value="clk0Fxnglobal"/>
+		<item key="wrap" value="true"/>
+		<item key="casesensitive" value="false"/>
+		<item key="wholeword" value="false"/>
+		<item key="incremental" value="false"/>
+		<item key="isRegEx" value="false"/>
+		<list key="findhistory">
+			<item value="clk0Fxnglobal"/>
+			<item value="     UInt32 t"/>
+			<item value="afeinit3"/>
+			<item value="DeviceInfo"/>
+			<item value="Device Info"/>
+			<item value="Device"/>
+			<item value="Device Info "/>
+			<item value="Device Info Service"/>
+			<item value="Device Info ServiceDevice Info Service"/>
+			<item value="Gap gatt service"/>
+			<item value="attDeviceName_rename"/>
+			<item value="CharacteristicData_t"/>
+			<item value="advData1_ReStruct"/>
+			<item value="service"/>
+			<item value="sericce"/>
+		</list>
+		<list key="replacehistory">
+		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item key="DIALOG_X_ORIGIN" value="1001"/>
+		<item key="DIALOG_Y_ORIGIN" value="266"/>
+		<item key="DIALOG_WIDTH" value="284"/>
+		<item key="DIALOG_HEIGHT" value="391"/>
+		<item key="DIALOG_FONT_NAME" value="1|Segoe UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Segoe UI"/>
+	</section>
+</section>
