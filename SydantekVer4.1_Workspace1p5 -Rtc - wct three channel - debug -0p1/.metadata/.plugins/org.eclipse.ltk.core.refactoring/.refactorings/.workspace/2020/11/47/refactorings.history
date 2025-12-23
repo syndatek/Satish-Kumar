@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs&apos; to &apos;application&apos;" description="Rename resource &apos;project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="/project_zero_CC26X2R1_LAUNCHXL_tirtos_ccs" name="application" stamp="1605679685645" updateReferences="true"/>
+</session>
