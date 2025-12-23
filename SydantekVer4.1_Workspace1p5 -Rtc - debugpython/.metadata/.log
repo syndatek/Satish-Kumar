@@ -1,0 +1,125 @@
+!SESSION 2021-04-16 16:18:49.919 -----------------------------------------------
+eclipse.buildId=4.14.0.I20191210-0610
+java.version=1.8.0_144
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_IN
+Framework arguments:  -product com.ti.ccstudio.branding.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product com.ti.ccstudio.branding.product
+
+This is a continuation of log file C:\tibackup\SydantekVer4.1_Workspace1p5 -Rtc - debugpython\.metadata\.bak_2.log
+Created Time: 2021-04-16 18:36:56.623
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-04-16 18:36:56.623
+!MESSAGE DS_ERROR: Cortex_M4_0: JTAG Communication Error: (Error -1170 @ 0x0) Unable to access the DAP. Reset the device, and retry the operation. If error persists, confirm configuration, power-cycle the board, and/or try more reliable JTAG settings (e.g. lower TCLK). (Emulation package 9.2.0.00002) 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2021-04-16 18:36:58.561
+!MESSAGE DS_ERROR: Cortex_M4_0: Failed to remove the debug state from the target before disconnecting.  There may still be breakpoint op-codes embedded in program memory.  It is recommended that you reset the emulator before you connect and reload your program before you continue debugging
+
+!SESSION 2021-05-22 12:20:57.147 -----------------------------------------------
+eclipse.buildId=4.14.0.I20191210-0610
+java.version=1.8.0_144
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_IN
+Framework arguments:  -product com.ti.ccstudio.branding.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product com.ti.ccstudio.branding.product
+
+!ENTRY org.eclipse.core.resources 2 10035 2021-05-22 12:21:27.281
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+
+!ENTRY com.ti.common.core 1 0 2021-05-22 12:21:27.366
+!MESSAGE path=ccs_base/DebugServer
+
+!ENTRY com.ti.common.core 1 0 2021-05-22 12:21:27.368
+!MESSAGE debugServerDir=C:/ti/ccs1011/ccs/ccs_base/DebugServer
+
+!ENTRY com.ti.ccstudio.ui 1 0 2021-05-22 12:21:49.616
+!MESSAGE CCS IDE session started!
+	CCS build: 10.1.1.00004
+	CCS location: C:/ti/ccs1011/ccs
+	Workspace location: C:/tibackup/SydantekVer4.1_Workspace1p5 -Rtc - debugpython
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-05-22 12:21:50.044
+!MESSAGE constructor
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-05-22 12:21:50.086
+!MESSAGE done with directories
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-05-22 12:21:50.087
+!MESSAGE loading ti_logger
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-05-22 12:21:50.089
+!MESSAGE Platform os: win32
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-05-22 12:21:50.091
+!MESSAGE loading cToolsIF
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-05-22 12:21:50.095
+!MESSAGE loading cTools
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-05-22 12:21:50.099
+!MESSAGE loading TraceFactory
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-05-22 12:21:50.103
+!MESSAGE loading sqlite3
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-05-22 12:21:50.107
+!MESSAGE loading CloudTrace
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-05-22 12:21:50.221
+!MESSAGE CloudTrace interface loaded
+
+!ENTRY com.ti.ccstudio.project.ui.webcontent 1 0 2021-05-22 12:21:50.419
+!MESSAGE CCS HTTP adapter started! [ccs.port:55666] - Open 'http://localhost:55666/ide' in web browser to see listing of available APIs...
+!SESSION 2021-05-22 12:42:19.757 -----------------------------------------------
+eclipse.buildId=4.14.0.I20191210-0610
+java.version=1.8.0_144
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_IN
+Framework arguments:  -product com.ti.ccstudio.branding.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product com.ti.ccstudio.branding.product
+
+!ENTRY com.ti.common.core 1 0 2021-05-22 12:43:10.673
+!MESSAGE path=ccs_base/DebugServer
+
+!ENTRY com.ti.common.core 1 0 2021-05-22 12:43:10.676
+!MESSAGE debugServerDir=C:/ti/ccs1011/ccs/ccs_base/DebugServer
+
+!ENTRY com.ti.ccstudio.ui 1 0 2021-05-22 12:43:28.428
+!MESSAGE CCS IDE session started!
+	CCS build: 10.1.1.00004
+	CCS location: C:/ti/ccs1011/ccs
+	Workspace location: C:/tibackup/SydantekVer4.1_Workspace1p5 -Rtc - debugpython
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-05-22 12:43:28.760
+!MESSAGE constructor
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-05-22 12:43:28.761
+!MESSAGE done with directories
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-05-22 12:43:28.762
+!MESSAGE loading ti_logger
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-05-22 12:43:28.765
+!MESSAGE Platform os: win32
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-05-22 12:43:28.766
+!MESSAGE loading cToolsIF
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-05-22 12:43:28.812
+!MESSAGE loading cTools
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-05-22 12:43:28.815
+!MESSAGE loading TraceFactory
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-05-22 12:43:28.817
+!MESSAGE loading sqlite3
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-05-22 12:43:28.820
+!MESSAGE loading CloudTrace
+
+!ENTRY com.ti.dbgtrc.webapp.CloudTraceInterface 0 0 2021-05-22 12:43:28.831
+!MESSAGE CloudTrace interface loaded
+
+!ENTRY com.ti.ccstudio.project.ui.webcontent 1 0 2021-05-22 12:43:29.279
+!MESSAGE CCS HTTP adapter started! [ccs.port:55726] - Open 'http://localhost:55726/ide' in web browser to see listing of available APIs...
