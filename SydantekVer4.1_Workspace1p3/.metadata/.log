@@ -1,0 +1,25 @@
+!SESSION 2020-12-30 11:29:45.640 -----------------------------------------------
+eclipse.buildId=4.14.0.I20191210-0610
+java.version=1.8.0_144
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_IN
+Framework arguments:  -product com.ti.ccstudio.branding.product
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -product com.ti.ccstudio.branding.product
+
+This is a continuation of log file C:\tibackup\SydantekVer4.1_Workspace1p3\.metadata\.bak_1.log
+Created Time: 2020-12-30 13:02:45.178
+
+!ENTRY com.ti.ccstudio.debug 1 0 2020-12-30 13:02:45.178
+!MESSAGE DS_ERROR: Error initializing emulator:
+(Error -2083 @ 0x0)
+Unable to communicate with the debug probe. Confirm debug probe configuration and connections, reset the debug probe, and retry the operation.
+(Emulation package 9.2.0.00002)
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2020-12-30 13:04:07.205
+!MESSAGE DS_ERROR: IcePick_C: Power Failure on Target CPU 
+
+
+!ENTRY com.ti.ccstudio.debug 1 0 2020-12-30 13:04:07.908
+!MESSAGE DS_ERROR: Cortex_M4_0: Failed to remove the debug state from the target before disconnecting.  There may still be breakpoint op-codes embedded in program memory.  It is recommended that you reset the emulator before you connect and reload your program before you continue debugging
+
